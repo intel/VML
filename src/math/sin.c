@@ -1,14 +1,21 @@
-#include "ckl.h"
 #include "cpu.h"
-
+#include "vmath.h"
 #include <immintrin.h>
 #include <math.h>
 #include <stdint.h>
+#include <stdio.h>
 
 __m128d _ZGVbN2v_sin(__m128d x);
 __m256d _ZGVcN4v_sin(__m256d x);
 __m256d _ZGVdN4v_sin(__m256d x);
 __m512d _ZGVeN8v_sin(__m512d x);
+
+void vsin_avx512(const double *input_array, double *result_array,
+                 unsigned int size);
+void vsin_scalar(const double *input_array, double *result_array,
+                 unsigned int size);
+static int (*funcs[])(const double *, double *, unsigned int) = {
+    vsin_avx512, vsin_scalar, vsin_scalar, vsin_scalar, vsin_scalar};
 
 /* kernel with vectorization up to AVX512 */
 void vsin_avx512(const double *input_array, double *result_array,
@@ -140,14 +147,5 @@ void vsin_scalar(const double *input_array, double *result_array,
 /* vectorized sin wraper */
 void ckl_vsin(const double *input_array, double *result_array,
               unsigned int size) {
-  int a = capability_detection();
-
-  if (a == CAP_AVX512) {
-    vsin_avx512(input_array, result_array, size);
-  } else if (a == CAP_AVX2) {
-  } else if (a == CAP_AVX) {
-  } else if (a == CAP_SSE) {
-  } else {
-    vsin_scalar(input_array, result_array, size);
-  }
+  funcs[func_index](input_array, result_array, size);
 }

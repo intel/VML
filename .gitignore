@@ -1,0 +1,5 @@
+.vscode/*
+benchmarks/bin/*
+tests/bin/*
+*.o
+lib/*
