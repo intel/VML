@@ -11,8 +11,9 @@ int __attribute__((constructor)) init(void) {
     func_index = INDEX_AVX2;
   else if (support_avx())
     func_index = INDEX_AVX;
-  else if (support_sse())
-    func_index = INDEX_SSE;
+  else if (support_sse2())
+    func_index = INDEX_SSE2;
   // printf("==== func_index=%d\n", func_index);
+  // func_index = INDEX_SSE2;
   return func_index;
 }

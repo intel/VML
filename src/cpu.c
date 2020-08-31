@@ -25,6 +25,16 @@ int support_sse() {
   return ret;
 }
 
+int support_sse2() {
+  int eax, ebx, ecx, edx;
+  int ret = 0;
+
+  cpuid(1, &eax, &ebx, &ecx, &edx);
+  if (edx & (1 << 26))
+    ret = 1;
+  return ret;
+}
+
 int support_avx() {
   int eax, ebx, ecx, edx;
   int ret = 0;

@@ -4,7 +4,7 @@
 #define INDEX_AVX512 0
 #define INDEX_AVX2 1
 #define INDEX_AVX 2
-#define INDEX_SSE 3
+#define INDEX_SSE2 3
 #define INDEX_NON_VECTOR 4
 
 extern int func_index;

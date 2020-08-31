@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   duration1 = ((double)(finish1.tv_sec - start1.tv_sec) * 1000000 +
                (double)(finish1.tv_usec - start1.tv_usec)) /
               1000000;
-  printf("prepare time: %lf s, loop time: %lf\n", duration1, duration);
+  // printf("prepare time: %lf s, loop time: %lf\n", duration1, duration);
   duration /= loopCount;
   double gflops = 2.0 * dim;
   gflops = gflops / duration * 1.0e-6;

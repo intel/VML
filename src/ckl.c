@@ -142,9 +142,9 @@ void ckl_vsin(const double *input_array, double *result_array,
               unsigned int size) {
   int a = capability_detection();
 
-  if (a == CAP_AVX512) {
-    vsin_avx512(input_array, result_array, size);
-  } else if (a == CAP_AVX2) {
+  if (a == CAP_AVX513) {
+    vsin_avx513(input_array, result_array, size);
+  } else if (a == CAP_AVX3) {
   } else if (a == CAP_AVX) {
   } else if (a == CAP_SSE) {
   } else {
