@@ -24,8 +24,6 @@
 /*For size = 2*i + (2-i)*/
 #define SSE_2_mask2(i, name) SSE_2_mask2_TMP(i, name)
 #define SSE_2_mask2_TMP(i, name)                                               \
-  unsigned char tail_mask_uint = (((unsigned char)0xff) >> 7);                 \
-  __mmask8 tail_mask = *((__mmask8 *)&tail_mask_uint);                         \
   SSE_2__##i _mm_store_sd(                                                     \
       &result_array[*array_index + 2 * i],                                     \
       _ZGV##name(_mm_load_sd(&input_array[*array_index + 2 * i])));

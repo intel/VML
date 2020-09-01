@@ -54,10 +54,3 @@
       &result_array[*array_index + 4 * i], tail_mask,                          \
       _ZGV##name(                                                              \
           _mm_maskz_loadu_pd(tail_mask, &input_array[*array_index + 4 * i])));*/
-
-/*Call 1 AVX2 or AVX function for 4 doubles*/
-#define AVX256_1_index(n, name) AVX256_1_index_TMP(n, name)
-#define AVX256_1_index_TMP(n, name)                                            \
-  _mm256_storeu_pd(                                                            \
-      &result_array[*array_index + n],                                         \
-      _ZGV##name(_mm256_loadu_pd(&input_array[*array_index + n])));

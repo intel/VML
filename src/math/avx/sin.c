@@ -1,4 +1,3 @@
-#include "cpu.h"
 #include "vmath.h"
 #include <immintrin.h>
 #include <math.h>

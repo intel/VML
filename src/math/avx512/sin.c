@@ -1,4 +1,3 @@
-#include "cpu.h"
 #include "vmath.h"
 #include <immintrin.h>
 #include <math.h>
@@ -13,6 +12,7 @@ __m512d _ZGVeN8v_sin(__m512d x);
 #define AVX512_NAME eN8v_sin
 #define AVX2_NAME dN4v_sin
 
+#include "../common/avx.c"
 #include "../common/avx2.c"
 #include "../common/avx512.c"
 
@@ -25,7 +25,7 @@ __attribute__((always_inline)) inline void avx512_15(const double *input_array,
     AVX512_8_mask8(1, AVX512_NAME)
   } else if (size == 12) {
     AVX512_8__1
-    AVX256_1_index(8, AVX2_NAME)
+    AVX_4_offset(8, AVX2_NAME)
   } else if (size == 11 || size == 10 || size == 9) {
     AVX512_8_mask4(1, AVX2_NAME)
   } else if (size == 8) {
@@ -33,7 +33,7 @@ __attribute__((always_inline)) inline void avx512_15(const double *input_array,
   } else if (size == 5 || size == 6 || size == 7) {
     AVX512_8_mask8(0, AVX512_NAME)
   } else if (size == 4) {
-    AVX256_1_index(0, AVX2_NAME)
+    AVX_4_offset(0, AVX2_NAME)
   } else {
     AVX512_8_mask4(0, AVX2_NAME)
   }
@@ -48,7 +48,7 @@ __attribute__((always_inline)) inline void avx512_31(const double *input_array,
     AVX512_8_mask8(3, AVX512_NAME)
   } else if (size == 28) {
     AVX512_8__3
-    AVX256_1_index(24, AVX2_NAME)
+    AVX_4_offset(24, AVX2_NAME)
   } else if (size == 27 || size == 26 || size == 25) {
     AVX512_8_mask4(3, AVX2_NAME)
   } else if (size == 24) {
@@ -57,7 +57,7 @@ __attribute__((always_inline)) inline void avx512_31(const double *input_array,
     AVX512_8_mask8(2, AVX512_NAME)
   } else if (size == 20) {
     AVX512_8__2
-    AVX256_1_index(16, AVX2_NAME)
+    AVX_4_offset(16, AVX2_NAME)
   } else if (size == 19 || size == 18 || size == 17) {
     AVX512_8_mask4(2, AVX2_NAME)
 

@@ -50,3 +50,10 @@
   AVX_4__##i _mm_store_sd(                                                     \
       &result_array[*array_index + 4 * i],                                     \
       _ZGV##name(_mm_load_sd(&input_array[*array_index + 4 * i])));
+
+/*Call 1 AVX2 or AVX function for 4 doubles*/
+#define AVX_4_offset(n, name) AVX_4_offset_TMP(n, name)
+#define AVX_4_offset_TMP(n, name)                                              \
+  _mm256_storeu_pd(                                                            \
+      &result_array[*array_index + n],                                         \
+      _ZGV##name(_mm256_loadu_pd(&input_array[*array_index + n])));

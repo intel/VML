@@ -5,13 +5,6 @@
       &result_array[*array_index + i * 8],                                     \
       _ZGV##name(_mm512_loadu_pd(&input_array[*array_index + i * 8])));
 
-/*For 16 floats*/
-#define AVX512_16(i, name) AVX512_16_TMP(i, name)
-#define AVX512_16_TMP(i, name)                                                 \
-  _mm512_storeu_ps(                                                            \
-      &result_array[*array_index + i * 16],                                    \
-      _ZGV##name(_mm512_loadu_ps(&input_array[*array_index + i * 16])));
-
 #define AVX512_8__0
 /*Call 1 AVX512 function for 8 doubles*/
 #define AVX512_8__1 AVX512_8(0, AVX512_NAME)
@@ -21,16 +14,6 @@
 #define AVX512_8__3 AVX512_8__2 AVX512_8(2, AVX512_NAME)
 /*Call 4 AVX512 function for 8 doubles*/
 #define AVX512_8__4 AVX512_8__3 AVX512_8(3, AVX512_NAME)
-
-#define AVX512_16__0
-/*Call 1 AVX512 function for 16 floats*/
-#define AVX512_16__1 AVX512_16(0, AVX512_NAME)
-/*Call 2 AVX512 function for 16 floats*/
-#define AVX512_16__2 AVX512_16__1 AVX512_16(1, AVX512_NAME)
-/*Call 3 AVX512 function for 16 float*/
-#define AVX512_16__3 AVX512_16__2 AVX512_16(2, AVX512_NAME)
-/*Call 4 AVX512 function for 16 floats*/
-#define AVX512_16__4 AVX512_16__3 AVX512_16(3, AVX512_NAME)
 
 /*For size = 8*i + (8-i)*/
 #define AVX512_8_mask8(i, name) AVX512_8_mask8_TMP(i, name)
