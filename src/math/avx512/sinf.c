@@ -12,15 +12,14 @@ __m512d _ZGVeN8v_sin(__m512d x);
 #define AVX512_NAME eN8v_sin
 #define AVX2_NAME dN4v_sin
 
-#include "../common/avx.c"
-#include "../common/avx2.c"
-#include "../common/avx512.c"
+#include "../commonf2d/avx.c"
+#include "../commonf2d/avx2.c"
+#include "../commonf2d/avx512.c"
 
 /*This function deal with size in 1~15*/
-__attribute__((always_inline)) inline void avx512_15(const double *input_array,
-                                                     double *result_array,
-                                                     int size,
-                                                     int *array_index) {
+__attribute__((always_inline)) static inline void
+avx512_15(const float *input_array, float *result_array, int size,
+          int *array_index) {
   if (size == 13 || size == 14 || size == 15) {
     AVX512_8_mask8(1, AVX512_NAME)
   } else if (size == 12) {
@@ -40,10 +39,9 @@ __attribute__((always_inline)) inline void avx512_15(const double *input_array,
 }
 
 /*This function deals with size in 1~31 */
-__attribute__((always_inline)) inline void avx512_31(const double *input_array,
-                                                     double *result_array,
-                                                     int size,
-                                                     int *array_index) {
+__attribute__((always_inline)) static inline void
+avx512_31(const float *input_array, float *result_array, int size,
+          int *array_index) {
   if (size == 31 || size == 30 || size == 29) {
     AVX512_8_mask8(3, AVX512_NAME)
   } else if (size == 28) {
@@ -66,8 +64,8 @@ __attribute__((always_inline)) inline void avx512_31(const double *input_array,
     avx512_15(input_array, result_array, size, array_index);
 }
 
-void vsin_avx512_sub(const double *input_array, double *result_array,
-                     unsigned int size) {
+static void vsin_avx512_sub(const float *input_array, float *result_array,
+                            unsigned int size) {
   int index = 0;
   int *array_index = &index;
   if (size > 32) {
@@ -87,8 +85,8 @@ void vsin_avx512_sub(const double *input_array, double *result_array,
 }
 
 /* kernel with vectorization up to AVX512 */
-void vsin_avx512(const double *input_array, double *result_array,
-                 unsigned int size) {
+void vsinf_avx512(const float *input_array, float *result_array,
+                  unsigned int size) {
   int index = 0;
   int *array_index = &index;
   if (size > 16) {

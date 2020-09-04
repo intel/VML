@@ -21,7 +21,10 @@ all : cppbin cbin refbench
 	$(foreach c_test_case, $(C_TEST_CASES), \
 		mv $(c_test_case).bin bin; \
 	)
-	mv sin_scalar_vec sin_scalar bin
+	$(foreach refc_test_case, $(REF_TEST_CASES), \
+		mv $(refc_test_case).bin bin; \
+		mv $(refc_test_case)_vec.bin bin; \
+	)
 
 cppbin :
 	$(foreach cpp_test_case, $(CPP_TEST_CASES), \
@@ -34,8 +37,10 @@ cbin :
 	)
 
 refbench :
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o sin_scalar_vec sin_scalar.c -lm -march=skylake-avx512 -ffast-math -ftree-loop-vectorize
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o sin_scalar sin_scalar.c -lm
+	$(foreach refc_test_case, $(REF_TEST_CASES), \
+		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case)_vec.bin -lm -march=skylake-avx512 -ffast-math -ftree-loop-vectorize; \
+		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case).bin -lm; \
+	)
 
 runtest :
 	$(foreach cpp_test_case, $(CPP_TEST_CASES), \

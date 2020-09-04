@@ -11,5 +11,7 @@ extern int func_index;
 
 void ckl_vsin(const double *input_array, double *result_array,
               unsigned int size);
+void ckl_vsinf(const float *input_array, float *result_array,
+               unsigned int size);
 
 #endif // END OF THIS HEADER FILE

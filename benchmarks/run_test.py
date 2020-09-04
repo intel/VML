@@ -22,6 +22,9 @@ def run_cmd(cmd, env=None):
 
 def main():
     parser = argparse.ArgumentParser(description='benchmark data collection tool')
+    parser.add_argument('--func', type=str,
+                        metavar="func",
+                        help='function names such as sin, sinf, cos, cosf...')
     parser.add_argument('--name', type=str,
                         metavar="name",
                         help='test binary name (vector, scalar, scalar_vec)')
@@ -32,13 +35,18 @@ def main():
     #                    dest='in_turn',
     #                    help='Find the regression on by one')
     args = parser.parse_args()
-    print(args.name, args.loop)
+    
+    print(args.func, args.name, args.loop)
     if args.name == "vector":
-        test_name = "sin_vector.bin"
+        test_name = "{}_vector.bin".format(args.func)
     elif args.name == "scalar":
-        test_name = "sin_scalar"
+        test_name = "{}_scalar.bin".format(args.func)
     elif args.name == "scalar_vec":
-        test_name = "sin_scalar_vec"
+        test_name = "{}_scalar_vec.bin".format(args.func)
+    else:
+        parser.print_help()
+        exit(1)
+    print(test_name)
     numbers = [1,2,3,4,5,6,7,8,9,10,14,15,16,17,18,30,31,32,33,34,62,63,64,65,66,1024,10000]
     #numbers = [1024,10000]
     results = []

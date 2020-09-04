@@ -10,12 +10,12 @@ __m256d _ZGVdN4v_sin(__m256d x);
 
 #define AVX2_NAME dN4v_sin
 
-#include "../common/avx2.c"
+#include "../commonf2d/avx2.c"
 
 /*This function deal with size in 1~7*/
-__attribute__((always_inline)) inline void avx2_7(const double *input_array,
-                                                  double *result_array,
-                                                  int size, int *array_index) {
+__attribute__((always_inline)) inline void avx2_7(const float *input_array,
+                                                  float *result_array, int size,
+                                                  int *array_index) {
   if (size == 7 || size == 6 || size == 5) {
     AVX2_4_mask4(1, AVX2_NAME)
   } else if (size == 4) {
@@ -26,8 +26,8 @@ __attribute__((always_inline)) inline void avx2_7(const double *input_array,
 }
 
 /*This function deal with size in 1~15*/
-__attribute__((always_inline)) inline void avx2_15(const double *input_array,
-                                                   double *result_array,
+__attribute__((always_inline)) inline void avx2_15(const float *input_array,
+                                                   float *result_array,
                                                    int size, int *array_index) {
   if (size == 13 || size == 14 || size == 15) {
     AVX2_4_mask4(3, AVX2_NAME)
@@ -47,8 +47,8 @@ __attribute__((always_inline)) inline void avx2_15(const double *input_array,
 }
 
 /* kernel with vectorization up to AVX2 */
-void vsin_avx2(const double *input_array, double *result_array,
-               unsigned int size) {
+void vsinf_avx2(const float *input_array, float *result_array,
+                unsigned int size) {
   int index = 0;
   int *array_index = &index;
   if (size > 8) {

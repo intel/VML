@@ -1,5 +1,5 @@
 #################### Configuration area #####################
 CPP_TEST_CASES      :=
 
-C_TEST_CASES        := sin
+C_TEST_CASES        := sin sinf
 #############################################################

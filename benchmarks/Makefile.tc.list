@@ -1,5 +1,6 @@
 #################### Configuration area #####################
 CPP_TEST_CASES      :=
 
-C_TEST_CASES        := sin_vector
+C_TEST_CASES        := sin_vector sinf_vector
+REF_TEST_CASES        := sin_scalar sinf_scalar
 #############################################################
