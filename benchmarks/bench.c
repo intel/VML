@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
     result_array[i] = 0.0;
   }
 
+  // sleep(2);
   // printf("===start \n");
-  // sleep(10);
   gettimeofday(&start, NULL);
   FUNCTION_LOOP
   gettimeofday(&finish, NULL);

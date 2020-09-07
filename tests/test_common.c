@@ -3,7 +3,7 @@ typedef unsigned long long MASK_TYPE;
 #else
 typedef unsigned int MASK_TYPE;
 #endif
-#define SPEC_SIZE 23
+
 /* generate a random floating point number from min to max */
 FLOAT rand_in_range(FLOAT min, FLOAT max) {
   FLOAT range = (max - min);
@@ -47,10 +47,7 @@ static int almostEquals(FLOAT *n1, FLOAT *n2) {
 int main(int argc, char *argv[]) {
   int dim = atoi(argv[1]);
   int check_flag = 1;
-  FLOAT special_values[SPEC_SIZE] = {
-      0.0,    30.0,   45.0,   60.0,   90.0,   135.0,  150.0, 180.0,
-      225.0,  270.0,  315.0,  360.0,  -30.0,  -45.0,  -60.0, -90.0,
-      -135.0, -150.0, -180.0, -225.0, -270.0, -315.0, -360.0};
+  FLOAT special_values[SPEC_SIZE] = SPECIAL_VALUES;
   unsigned int array_size = dim + SPEC_SIZE + 10;
   FLOAT input_array[array_size];
   FLOAT result_array_scalar[array_size];
@@ -60,9 +57,9 @@ int main(int argc, char *argv[]) {
     if (i < SPEC_SIZE)
       input_array[i] = special_values[i];
     else if (i >= SPEC_SIZE && i < SPEC_SIZE + 10)
-      input_array[i] = rand_in_range(-360.0, 360.0);
+      input_array[i] = RANGE1;
     else
-      input_array[i] = rand_in_range(-1.0, 1.0);
+      input_array[i] = RANGE2;
     result_array_scalar[i] = 0.0;
     result_array_vector[i] = 0.0;
   }
@@ -79,6 +76,7 @@ int main(int argc, char *argv[]) {
     if (!almostEquals(&result_array_scalar[i], &result_array_vector[i])) {
       printf("[Miss Match]: Scalar - %32.24lf\n", result_array_scalar[i]);
       printf("              Vector - %32.24lf\n", result_array_vector[i]);
+      printf("Input value:  %32.24lf\n", input_array[i]);
       // printf("              diff   - %32.24lf\n", diff);
       check_flag = 0;
     }

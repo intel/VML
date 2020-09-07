@@ -1,9 +1,10 @@
 #include "test_common.h"
-#define FLOAT float
+#define FLOAT double
+#define DOUBLE
 typedef void (*test_func_vector)(const FLOAT *, FLOAT *, unsigned int);
 typedef FLOAT (*test_func_scalar)(FLOAT);
-test_func_vector fp_vector = ckl_vsinf;
-test_func_scalar fp_scalar = sinf;
+test_func_vector fp_vector = ckl_vcos;
+test_func_scalar fp_scalar = cos;
 /**
 Test values define:
 The input array is SPECIAL_VALUES + 10 vaules from RANGES + dim values from
