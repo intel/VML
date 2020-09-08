@@ -60,4 +60,4 @@
 /*Call 3 SSE function for 2 doubles*/
 #define AVX_2__3 AVX_2__2 AVX_2(2, SSE_NAME)
 /*Call 4 SSE function for 2 doubles*/
-#define AVX_2__4 SSE_2__3 AVX_2(3, SSE_NAME)
+#define AVX_2__4 AVX_2__3 AVX_2(3, SSE_NAME)
