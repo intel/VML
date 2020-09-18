@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 __m128d _ZGVbN2v_log(__m128d x);
-//__m256d _ZGVcN4v_log(__m256d x);
+__m256d _ZGVcN4v_log(__m256d x);
 __m256d _ZGVdN4v_log(__m256d x);
 
 #define AVX2_NAME dN4v_log
