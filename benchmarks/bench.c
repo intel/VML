@@ -1,4 +1,5 @@
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
   int dim = atoi(argv[1]);
   int loopCount = atoi(argv[2]);
@@ -9,7 +10,8 @@ int main(int argc, char *argv[]) {
   FLOAT *input_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
   FLOAT *result_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
 
-  for (unsigned int i = 0; i < array_size; i++) {
+  for (unsigned int i = 0; i < array_size; i++)
+  {
     input_array[i] = (FLOAT)(rand() / 1000.0);
     result_array[i] = 0.0;
   }
@@ -20,7 +22,8 @@ int main(int argc, char *argv[]) {
   FUNCTION_LOOP
   gettimeofday(&finish, NULL);
   // printf("===end \n");
-  for (unsigned int i = 0; i < array_size; i++) {
+  for (unsigned int i = 0; i < array_size; i++)
+  {
     result_array[0] += result_array[i];
   }
   printf("Scalar result:\n");

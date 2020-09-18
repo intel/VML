@@ -39,7 +39,7 @@ static int almostEquals(FLOAT *n1, FLOAT *n2) {
     // a positive number.
     bias2 = sign_bit_mask | (*(MASK_TYPE *)(n2));
   }
-  // printf("bias1 - bias2=%d\n",
+  // printf("bias2 - bias2=%d\n",
   //       (bias1 >= bias2) ? (bias1 - bias2) : (bias2 - bias1));
   return ((bias1 >= bias2) ? (bias1 - bias2) : (bias2 - bias1)) <= 4;
 }
