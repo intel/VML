@@ -1,12 +1,13 @@
-include ../Makefile.common
+#include ../Makefile.common
 include Makefile.tc.list
 
 #################### Configuration area #####################
 #------------ Compiling options --------------#
-CFLAGS       +=
+CKL_INCLUDE_DIR := ../math
+CFLAGS       += -march=skylake-avx512 -ffast-math -ftree-loop-vectorize
 CXXFLAGS     +=
 CPPFLAGS     += -I$(CKL_INCLUDE_DIR)
-LDFLAGS      += -L$(CKL_LIB_DIR) -l$(CKL_NAME) -lm
+LDFLAGS      += -lm
 #---------------------------------------------#
 #############################################################
 
@@ -38,8 +39,8 @@ cbin :
 
 refbench :
 	$(foreach refc_test_case, $(REF_TEST_CASES), \
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case)_vec.bin -lm -march=skylake-avx512 -ffast-math -ftree-loop-vectorize; \
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case).bin -lm; \
+		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case)_vec.bin $(LDFLAGS); \
+		$(CC) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case).bin -lm; \
 	)
 
 runtest :

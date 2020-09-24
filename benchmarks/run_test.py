@@ -66,7 +66,7 @@ def main():
             val = run_cmd(cmd)
             if val > max:
                 max = val
-        print(num, max)
+        #print(num, max)
         results.append(str(max))
     s=""
     for rst in results:
