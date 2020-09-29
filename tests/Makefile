@@ -4,7 +4,7 @@ include Makefile.tc.list
 #################### Configuration area #####################
 #------------ Compiling options --------------#
 CKL_INCLUDE_DIR := ../math
-CFLAGS       += -march=westmere -ffast-math -ftree-loop-vectorize
+CFLAGS       += -ffast-math -ftree-loop-vectorize
 CXXFLAGS     +=
 CPPFLAGS     += -I$(CKL_INCLUDE_DIR)
 LDFLAGS      += -lm

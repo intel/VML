@@ -9,6 +9,7 @@
 
 #define FUNC_VEC_LOOP(name) FUNC_VEC_TMP_LOOP(name)
 #define FUNC_VEC_TMP_LOOP(name)                                      \
+  ckl_init();                                                        \
   for (unsigned int i = 0; i < loopCount; i++)                       \
   {                                                                  \
     ckl_v##name(input_array + i * dim, result_array + i * dim, dim); \
