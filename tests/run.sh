@@ -2,5 +2,5 @@
 for (( c=1; c<=130; c++ ))
 do
    echo "=== $c ==="  
-   ./bin/sinf.bin $c
+   ./bin/sin.bin $c
 done

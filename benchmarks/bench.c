@@ -10,18 +10,32 @@ int main(int argc, char *argv[])
   FLOAT *input_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
   FLOAT *result_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
 
+#ifdef POW
+  FLOAT *input_array1 = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
+#endif
+
+#ifdef SINCOS
+  FLOAT *result_array1 = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
+#endif
+
   for (unsigned int i = 0; i < array_size; i++)
   {
     input_array[i] = (FLOAT)(rand() / 1000.0);
+#ifdef POW
+    input_array1[i] = (FLOAT)(rand() / 100.0);
+#endif
     result_array[i] = 0.0;
+#ifdef SINCOS
+    result_array1[i] = 0.0;
+#endif
   }
 
-  // sleep(2);
-  // printf("===start \n");
+  //sleep(2);
+  //printf("===start \n");
   gettimeofday(&start, NULL);
   FUNCTION_LOOP
   gettimeofday(&finish, NULL);
-  // printf("===end \n");
+  //printf("===end \n");
   for (unsigned int i = 0; i < array_size; i++)
   {
     result_array[0] += result_array[i];
@@ -38,6 +52,14 @@ int main(int argc, char *argv[])
 
   free(input_array);
   free(result_array);
+
+#ifdef POW
+  free(input_array1);
+#endif
+
+#ifdef SINCOS
+  free(result_array1);
+#endif
 
   return 0;
 }

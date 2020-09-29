@@ -1,6 +1,6 @@
 #ifndef TEST_COMMON_H
 #define TEST_COMMON_H
-#include "vmath.h"
+#include "ckl_math.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

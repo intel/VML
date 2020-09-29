@@ -1,12 +1,13 @@
-include ../Makefile.common
+# include ../Makefile.common
 include Makefile.tc.list
 
 #################### Configuration area #####################
 #------------ Compiling options --------------#
-CFLAGS       +=
+CKL_INCLUDE_DIR := ../math
+CFLAGS       += -ffast-math -ftree-loop-vectorize
 CXXFLAGS     +=
 CPPFLAGS     += -I$(CKL_INCLUDE_DIR)
-LDFLAGS      += -L$(CKL_LIB_DIR) -l$(CKL_NAME) -lm
+LDFLAGS      += -lm
 #---------------------------------------------#
 #############################################################
 
