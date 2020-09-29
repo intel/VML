@@ -70,6 +70,8 @@ int main(int argc, char *argv[])
   while (real_array_size > array_size)
     real_array_size -= dim;
 
+  ckl_init();
+
   for (unsigned int i = 0; i < array_size; i++)
   {
     if (i < SPEC_SIZE)
