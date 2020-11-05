@@ -1,6 +1,6 @@
 #################### Configuration area #####################
 CPP_TEST_CASES      :=
 
-C_TEST_CASES        := sin_vector
-REF_TEST_CASES        := sin_scalar
+C_TEST_CASES        := sin_vector cos_vector log_vector exp_vector cosf_vector sinf_vector logf_vector expf_vector pow_vector powf_vector sincos_vector sincosf_vector
+REF_TEST_CASES        := sin_scalar cos_scalar log_scalar exp_scalar cosf_scalar sinf_scalar logf_scalar expf_scalar pow_scalar powf_scalar sincos_scalar sincosf_scalar
 #############################################################

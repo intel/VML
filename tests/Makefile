@@ -3,11 +3,11 @@ include Makefile.tc.list
 
 #################### Configuration area #####################
 #------------ Compiling options --------------#
-CKL_INCLUDE_DIR := ../math
-CFLAGS       += -ffast-math -ftree-loop-vectorize
-CXXFLAGS     +=
-CPPFLAGS     += -I$(CKL_INCLUDE_DIR)
-LDFLAGS      += -lm
+CKL_INCLUDE_DIR := ../
+CFLAGS       := -m64 -g -O2 -fPIC -Wall -ffast-math -ftree-loop-vectorize
+CXXFLAGS     := -m64 -g -O2 -fPIC -std=c++11 -Wall
+CPPFLAGS     := -I$(CKL_INCLUDE_DIR)
+LDFLAGS      := -lm
 #---------------------------------------------#
 #############################################################
 

@@ -3,11 +3,11 @@ include Makefile.tc.list
 
 #################### Configuration area #####################
 #------------ Compiling options --------------#
-CKL_INCLUDE_DIR := ../math
-CFLAGS       += -march=skylake-avx512 -ffast-math -ftree-loop-vectorize
-CXXFLAGS     +=
-CPPFLAGS     += -I$(CKL_INCLUDE_DIR)
-LDFLAGS      += -lm
+CKL_INCLUDE_DIR := ../
+CFLAGS       := -m64 -g -O2 -fPIC -Wall -march=skylake-avx512 -ffast-math -ftree-loop-vectorize
+CXXFLAGS     := -m64 -g -O2 -fPIC -std=c++11 -Wall
+CPPFLAGS     := -m64 -g -O2 -fPIC -Wall -I$(CKL_INCLUDE_DIR)
+LDFLAGS      := -lm
 #---------------------------------------------#
 #############################################################
 
@@ -34,7 +34,7 @@ cppbin :
 	
 cbin :
 	$(foreach c_test_case, $(C_TEST_CASES), \
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(c_test_case).c -o $(c_test_case).bin $(LDFLAGS); \
+		$(CC) $(CPPFLAGS) -ffast-math -ftree-loop-vectorize $(c_test_case).c -o $(c_test_case).bin $(LDFLAGS); \
 	)
 
 refbench :

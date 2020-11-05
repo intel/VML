@@ -1,3 +1,10 @@
+FLOAT rand_in_range(FLOAT min, FLOAT max)
+{
+  FLOAT range = (max - min);
+  FLOAT div = RAND_MAX / range;
+  return min + (rand() / div);
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -20,9 +27,9 @@ int main(int argc, char *argv[])
 
   for (unsigned int i = 0; i < array_size; i++)
   {
-    input_array[i] = (FLOAT)(rand() / 1000.0);
+    input_array[i] = RANGE1; //rand_in_range(-360.0, 360.0); //(FLOAT)(rand() / 1000.0);
 #ifdef POW
-    input_array1[i] = (FLOAT)(rand() / 100.0);
+    input_array1[i] = RANGE2; //(FLOAT)(rand() / 100.0);
 #endif
     result_array[i] = 0.0;
 #ifdef SINCOS
@@ -48,7 +55,7 @@ int main(int argc, char *argv[])
   duration /= loopCount;
   FLOAT gflops = 2.0 * dim;
   gflops = gflops / duration * 1.0e-6;
-  printf("[%d]:\t%lf s\t%lf MFLOPS\n", dim, duration, gflops);
+  printf("[%d]:\t%lf s\t%lf MFLOPS\n", dim, duration * loopCount, gflops);
 
   free(input_array);
   free(result_array);

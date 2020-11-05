@@ -1,5 +1,5 @@
 #################### Configuration area #####################
 CPP_TEST_CASES      :=
 
-C_TEST_CASES        := sin
+C_TEST_CASES        := sin cos log exp cosf sinf logf expf pow powf sincos sincosf
 #############################################################

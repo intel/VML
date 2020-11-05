@@ -9,4 +9,5 @@
             sincosf(input_array[j], &result_array[j], &result_array1[j]); \
         }                                                                 \
     }
+#define RANGE1 rand_in_range(-360.0, 360.0)
 #include "bench.c"
