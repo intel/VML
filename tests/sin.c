@@ -12,7 +12,7 @@ RANGE2; SPECIAL_VALUES array is for some special input values; SPEC_SIZE is its
 size; RANGE1 is for large random values generation; RANGE2 is for little ramdom
 values generation;
 **/
-#define SPEC_SIZE 32
+#define SPEC_SIZE 33
 #define SPECIAL_VALUES RADIANS
 #define RANGE1 rand_in_range(-2.0 * PI, 2.0 * PI)
 #define RANGE2 rand_in_range(-1.0, 1.0)

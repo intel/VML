@@ -146,13 +146,18 @@ int main(int argc, char *argv[])
     if (!almostEquals(&result_array_scalar[i], &result_array_vector[i]))
 #endif
     {
-      printf("[Miss Match]: Scalar - %32.24lf\n", result_array_scalar[i]);
-      printf("              Vector - %32.24lf\n", result_array_vector[i]);
+      printf("array size=%d real_array_size=%d\n", array_size, real_array_size);
+      printf("[Miss Match]: Scalar[%d] - %32.24lf\n", i, result_array_scalar[i]);
+      printf("              Vector[%d] - %32.24lf\n", i, result_array_vector[i]);
 #ifdef SINCOS
-      printf("[Miss Match]: Scalar1 - %32.24lf\n", result_array_scalar1[i]);
-      printf("              Vector1 - %32.24lf\n", result_array_vector1[i]);
+      printf("[Miss Match]: Scalar1[%d] - %32.24lf\n", i, result_array_scalar1[i]);
+      printf("              Vector1[%d] - %32.24lf\n", i, result_array_vector1[i]);
 #endif
-      printf("Input value:  %32.24lf\n", input_array[i]);
+#ifdef POW
+      printf("              Input [%d]:  %32.24lf, Input value1 [%d]:  %32.24lf\n", i, input_array[i], i, input_array1[i]);
+#else
+      printf("              Input [%d]:  %32.24lf\n", i, input_array[i]);
+#endif
       // printf("              diff   - %32.24lf\n", diff);
       check_flag = 0;
     }
