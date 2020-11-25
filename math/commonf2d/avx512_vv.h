@@ -62,3 +62,4 @@
                                     tail_mask, &input_array1[*array_index + 8 * i]))))); \
     if(ckl_post_hook)                                                                    \
         ckl_post_hook(ckl_post_hook_args);
+    

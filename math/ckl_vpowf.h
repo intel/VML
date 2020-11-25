@@ -85,7 +85,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
             AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
             *array_index += 4;
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array[*array_index + 2]);
+            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
         }
     }
 

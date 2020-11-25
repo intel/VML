@@ -85,7 +85,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__1(NAME_AVX2_POW);
             *array_index += 4;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array[*array_index + 2]);
+            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
         }
     }
 
