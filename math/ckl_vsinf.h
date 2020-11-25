@@ -103,7 +103,7 @@ void ckl_vsinf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 5;
             unsigned int rest = size & 31;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX512_16__2(NAME_AVX512_SINF)
                 *array_index += 32;
@@ -156,7 +156,7 @@ void ckl_vsinf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_8__2(NAME_AVX2_SINF)
                 *array_index += 16;
@@ -272,7 +272,7 @@ void ckl_vsinf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_8__2(NAME_AVX_SINF)
                 *array_index += 16;
@@ -301,7 +301,7 @@ void ckl_vsinf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 //SSE_2__2
                 SSE_4__2(NAME_SSE_SINF)
@@ -392,7 +392,7 @@ void ckl_vsinf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 //SSE_2__2
                 SSE_4__2(NAME_SSE_SINF)

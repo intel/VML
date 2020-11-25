@@ -1,12 +1,16 @@
 #define AVX_SINCOS_4(i) AVX_SINCOS_4_TMP(i)
 #define AVX_SINCOS_4_TMP(i)                                                       \
+  if(ckl_pre_hook)                                                                \
+        ckl_pre_hook(ckl_pre_hook_args);                                          \
   __m256d input4_value_##i = _mm256_loadu_pd(&input_array[*array_index + i * 4]); \
   _mm256_storeu_pd(                                                               \
       &result_array[*array_index + i * 4],                                        \
       _ZGVdN4v_sin(input4_value_##i));                                            \
   _mm256_storeu_pd(                                                               \
       &result_array1[*array_index + i * 4],                                       \
-      _ZGVdN4v_cos(input4_value_##i));
+      _ZGVdN4v_cos(input4_value_##i));                                            \
+  if(ckl_post_hook)                                                               \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define AVX_SINCOS_4__0
 /*Call 1 AVX function for 4 doubles*/
@@ -37,9 +41,11 @@
 /*For size = 4*i + (4-i)*/
 #define AVX_SINCOS_4_mask4(i) AVX_SINCOS_4_mask4_TMP(i)
 #define AVX_SINCOS_4_mask4_TMP(i)                                                          \
+  AVX_SINCOS_4__##i;                                                                       \
+  if(ckl_pre_hook)                                                                         \
+        ckl_pre_hook(ckl_pre_hook_args);                                                   \
   if ((size - 4 * i) == 1)                                                                 \
   {                                                                                        \
-    AVX_SINCOS_4__##i;                                                                     \
     __m256d input4_value_mask_##i = _mm256_maskload_pd(&input_array[*array_index + 4 * i], \
                                                        AVX_SINCOS_MASK_1);                 \
     _mm256_maskstore_pd(                                                                   \
@@ -51,7 +57,6 @@
   }                                                                                        \
   else if ((size - 4 * i) == 2)                                                            \
   {                                                                                        \
-    AVX_SINCOS_4__##i;                                                                     \
     __m256d input4_value_mask_##i = _mm256_maskload_pd(&input_array[*array_index + 4 * i], \
                                                        AVX_SINCOS_MASK_2);                 \
     _mm256_maskstore_pd(                                                                   \
@@ -63,7 +68,6 @@
   }                                                                                        \
   else if ((size - 4 * i) == 3)                                                            \
   {                                                                                        \
-    AVX_SINCOS_4__##i;                                                                     \
     __m256d input4_value_mask_##i = _mm256_maskload_pd(&input_array[*array_index + 4 * i], \
                                                        AVX_SINCOS_MASK_3);                 \
     _mm256_maskstore_pd(                                                                   \
@@ -72,27 +76,38 @@
     _mm256_maskstore_pd(                                                                   \
         &result_array1[*array_index + 4 * i], AVX_SINCOS_MASK_3,                           \
         _ZGVdN4v_cos(input4_value_mask_##i));                                              \
-  }
+  }                                                                                        \
+  if(ckl_post_hook)                                                                        \
+        ckl_post_hook(ckl_post_hook_args);
 
 /*For size = 4*i + (2-i)*/
 #define AVX_SINCOS_4_mask2(i) AVX_SINCOS_4_mask2_TMP(i)
 #define AVX_SINCOS_4_mask2_TMP(i)                                            \
   AVX_SINCOS_4__##i;                                                         \
+  if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                     \
   __m128d input2_value##i = _mm_load_sd(&input_array[*array_index + 2 * i]); \
   _mm_store_sd(                                                              \
       &result_array[*array_index + 4 * i],                                   \
       _ZGVbN2v_sin(input2_value##i));                                        \
   _mm_store_sd(                                                              \
       &result_array1[*array_index + 4 * i],                                  \
-      _ZGVbN2v_cos(input2_value##i));
+      _ZGVbN2v_cos(input2_value##i));                                        \
+  if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);
 
 /*Call 1 AVX or AVX function for 4 doubles*/
 #define AVX_SINCOS_4_offset(n) AVX_SINCOS_4_offset_TMP(n)
 #define AVX_SINCOS_4_offset_TMP(n)                                            \
+  if(ckl_pre_hook)                                                            \
+        ckl_pre_hook(ckl_pre_hook_args);                                      \
   __m256d input4_value_##n = _mm256_loadu_pd(&input_array[*array_index + n]); \
   _mm256_storeu_pd(                                                           \
       &result_array[*array_index + n],                                        \
       _ZGVdN4v_sin(input4_value_##n));                                        \
   _mm256_storeu_pd(                                                           \
       &result_array1[*array_index + n],                                       \
-      _ZGVdN4v_cos(input4_value_##n));
+      _ZGVdN4v_cos(input4_value_##n));                                        \
+  if(ckl_post_hook)                                                           \
+        ckl_post_hook(ckl_post_hook_args);
+  

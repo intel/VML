@@ -193,7 +193,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX512_vv_f2d_8__2(NAME_AVX512_POWF2D);
                 *array_index += 16;
@@ -266,7 +266,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
                 *array_index += 4;
@@ -319,7 +319,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_vv_f2d_2__2(NAME_SSE_POWF2D);
                 *array_index += 4;
@@ -372,7 +372,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_vv_f2d_2__2(NAME_SSE_POWF2D);
                 *array_index += 4;

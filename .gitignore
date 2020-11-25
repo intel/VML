@@ -3,3 +3,4 @@ benchmarks/bin/*
 tests/bin/*
 *.o
 lib/*
+examples/use_sin

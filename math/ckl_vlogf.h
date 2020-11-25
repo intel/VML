@@ -229,7 +229,7 @@ void ckl_vlogf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 5;
             unsigned int rest = size & 31;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX512_16__2(NAME_AVX512_LOGF)
                 *array_index += 32;
@@ -375,7 +375,7 @@ void ckl_vlogf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_8__1(NAME_AVX2_LOGF)
                 *array_index += 8;
@@ -528,7 +528,7 @@ void ckl_vlogf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_4__1(NAME_SSE_LOGF)
                 *array_index += 4;
@@ -617,7 +617,7 @@ void ckl_vlogf(const float *input_array, float *result_array,
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_4__2(NAME_SSE_LOGF)
                 *array_index += 8;

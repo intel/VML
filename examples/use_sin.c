@@ -21,6 +21,22 @@ FLOAT rand_in_range(FLOAT min, FLOAT max)
     return min + (rand() / div);
 }
 
+struct hook_args
+{
+   FLOAT input_arg[2];
+   FLOAT output_values[2];
+};
+
+
+void * hook_function(void * input)
+{
+    printf("=== I'm a hooker\n");
+    struct hook_args * args = input;
+    args->output_values[0] = sin(args->input_arg[0]);
+    args->output_values[1] = tan(args->input_arg[1]);
+    return NULL;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -33,6 +49,13 @@ int main(int argc, char *argv[])
     int loopCount = atoi(argv[2]);
     struct timeval start, finish;
     FLOAT duration;
+    struct hook_args hook_test;
+    hook_test.input_arg[0] = PI/2.0;
+    hook_test.input_arg[1] = PI/4.0;
+    hook_test.output_values[0] = 0.0;
+    hook_test.output_values[1] = 0.0;
+
+    ckl_set_pre_hook(hook_function, &hook_test);
 
     unsigned int array_size = dim * loopCount;
     FLOAT *input_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
@@ -50,6 +73,8 @@ int main(int argc, char *argv[])
         ckl_vsin(input_array + i * dim, result_array + i * dim, dim);
     }
     gettimeofday(&finish, NULL);
+    printf("hook_function's results: output_values[0]=%f, output_values[1]=%f\n", 
+            hook_test.output_values[0], hook_test.output_values[1]);
 
 #if 0
     for (unsigned int i = 0; i < array_size; i++)

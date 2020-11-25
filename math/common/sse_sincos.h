@@ -1,10 +1,14 @@
 #define SSE_SINCOS_2(i) SSE_SINCOS_2_TMP(i)
 #define SSE_SINCOS_2_TMP(i)                                                   \
+  if(ckl_pre_hook)                                                            \
+        ckl_pre_hook(ckl_pre_hook_args);                                      \
   __m128d input2_value##i = _mm_loadu_pd(&input_array[*array_index + i * 2]); \
   _mm_storeu_pd(&result_array[*array_index + i * 2],                          \
                 _ZGVbN2v_sin(input2_value##i));                               \
   _mm_storeu_pd(&result_array1[*array_index + i * 2],                         \
-                _ZGVbN2v_cos(input2_value##i));
+                _ZGVbN2v_cos(input2_value##i));                               \
+  if(ckl_post_hook)                                                           \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define SSE_SINCOS_2__0
 /*Call 1 SSE function for 2 doubles*/
@@ -42,10 +46,14 @@
 #define SSE_SINCOS_2_mask2(i) SSE_SINCOS_2_mask2_TMP(i)
 #define SSE_SINCOS_2_mask2_TMP(i)                                                 \
   SSE_SINCOS_2__##i;                                                              \
+  if(ckl_pre_hook)                                                                \
+        ckl_pre_hook(ckl_pre_hook_args);                                          \
   __m128d input2_mask_value##i = _mm_load_sd(&input_array[*array_index + 2 * i]); \
   _mm_store_sd(                                                                   \
       &result_array[*array_index + 2 * i],                                        \
       _ZGVbN2v_sin(input2_mask_value##i));                                        \
   _mm_store_sd(                                                                   \
       &result_array1[*array_index + 2 * i],                                       \
-      _ZGVbN2v_cos(input2_mask_value##i));
+      _ZGVbN2v_cos(input2_mask_value##i));                                        \
+  if(ckl_post_hook)                                                               \
+        ckl_post_hook(ckl_post_hook_args);

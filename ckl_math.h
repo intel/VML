@@ -5,7 +5,6 @@
 extern "C"
 {
 #endif
-
     void ckl_vsin(const double *input_array, double *result_array,
                   unsigned int size);
     void ckl_vsinf(const float *input_array, float *result_array,
@@ -30,6 +29,7 @@ extern "C"
                      double *cos_result_array, unsigned int size);
     void ckl_vsincosf(const float *input_array, float *sin_result_array,
                       float *cos_result_array, unsigned int size);
+    
 #include "math/ckl_vsin.h"
 #include "math/ckl_vcos.h"
 #include "math/ckl_vlog.h"

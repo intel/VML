@@ -1,9 +1,13 @@
 #define AVX_vv_4(i, name) AVX_vv_4_TMP(i, name)
 #define AVX_vv_4_TMP(i, name)                                         \
+  if(ckl_pre_hook)                                                    \
+        ckl_pre_hook(ckl_pre_hook_args);                              \
   _mm256_storeu_pd(                                                   \
       &result_array[*array_index + i * 4],                            \
       _ZGV##name(_mm256_loadu_pd(&input_array[*array_index + i * 4]), \
-                 _mm256_loadu_pd(&input_array1[*array_index + i * 4])));
+                 _mm256_loadu_pd(&input_array1[*array_index + i * 4])));\
+  if(ckl_post_hook)                                                    \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define AVX_vv_4__0(name)
 /*Call 1 AVX function for 4 doubles*/
@@ -86,9 +90,12 @@
 /*For size = 4*i + (4-i)*/
 #define AVX_vv_4_mask4(i, name) AVX_vv_4_mask4_TMP(i, name)
 #define AVX_vv_4_mask4_TMP(i, name)                                        \
+  AVX_vv_4__##i(name)                                                      \
+  if(ckl_pre_hook)                                                         \
+        ckl_pre_hook(ckl_pre_hook_args);                                   \
   if ((size - 4 * i) == 1)                                                 \
   {                                                                        \
-    AVX_vv_4__##i(name) _mm256_maskstore_pd(                               \
+    _mm256_maskstore_pd(                                                   \
         &result_array[*array_index + 4 * i], AVX_vv_MASK_1,                \
         _ZGV##name(_mm256_maskload_pd(&input_array[*array_index + 4 * i],  \
                                       AVX_vv_MASK_1),                      \
@@ -97,7 +104,7 @@
   }                                                                        \
   else if ((size - 4 * i) == 2)                                            \
   {                                                                        \
-    AVX_vv_4__##i(name) _mm256_maskstore_pd(                               \
+    _mm256_maskstore_pd(                                                   \
         &result_array[*array_index + 4 * i], AVX_vv_MASK_2,                \
         _ZGV##name(_mm256_maskload_pd(&input_array[*array_index + 4 * i],  \
                                       AVX_vv_MASK_2),                      \
@@ -106,26 +113,37 @@
   }                                                                        \
   else if ((size - 4 * i) == 3)                                            \
   {                                                                        \
-    AVX_vv_4__##i(name) _mm256_maskstore_pd(                               \
+    _mm256_maskstore_pd(                                                   \
         &result_array[*array_index + 4 * i], AVX_vv_MASK_3,                \
         _ZGV##name(_mm256_maskload_pd(&input_array[*array_index + 4 * i],  \
                                       AVX_vv_MASK_3),                      \
                    _mm256_maskload_pd(&input_array1[*array_index + 4 * i], \
                                       AVX_vv_MASK_3)));                    \
-  }
+  }                                                                        \
+  if(ckl_post_hook)                                                        \
+        ckl_post_hook(ckl_post_hook_args);
 
 /*For size = 4*i + (2-i)*/
 #define AVX_vv_4_mask2(i, name1, name2) AVX_vv_4_mask2_TMP(i, name1, name2)
-#define AVX_vv_4_mask2_TMP(i, name1, name2)                        \
-  AVX_vv_4__##i(name1) _mm_store_sd(                               \
-      &result_array[*array_index + 4 * i],                         \
-      _ZGV##name2(_mm_load_sd(&input_array[*array_index + 2 * i]), \
-                  _mm_load_sd(&input_array1[*array_index + 2 * i])));
+#define AVX_vv_4_mask2_TMP(i, name1, name2)                            \
+  AVX_vv_4__##i(name1)                                                 \
+  if(ckl_pre_hook)                                                     \
+        ckl_pre_hook(ckl_pre_hook_args);                               \
+  _mm_store_sd(                                                        \
+      &result_array[*array_index + 4 * i],                             \
+      _ZGV##name2(_mm_load_sd(&input_array[*array_index + 2 * i]),     \
+                  _mm_load_sd(&input_array1[*array_index + 2 * i])));  \
+  if(ckl_post_hook)                                                    \
+        ckl_post_hook(ckl_post_hook_args);
 
 /*Call 1 AVX2 or AVX function for 4 doubles*/
 #define AVX_vv_4_offset(n, name) AVX_vv_4_offset_TMP(n, name)
-#define AVX_vv_4_offset_TMP(n, name)                              \
-  _mm256_storeu_pd(                                               \
-      &result_array[*array_index + n],                            \
-      _ZGV##name(_mm256_loadu_pd(&input_array[*array_index + n]), \
-                 _mm256_loadu_pd(&input_array1[*array_index + n])));
+#define AVX_vv_4_offset_TMP(n, name)                                   \
+  if(ckl_pre_hook)                                                     \
+        ckl_pre_hook(ckl_pre_hook_args);                               \
+  _mm256_storeu_pd(                                                    \
+      &result_array[*array_index + n],                                 \
+      _ZGV##name(_mm256_loadu_pd(&input_array[*array_index + n]),      \
+                 _mm256_loadu_pd(&input_array1[*array_index + n])));   \
+  if(ckl_post_hook)                                                    \
+        ckl_post_hook(ckl_post_hook_args);

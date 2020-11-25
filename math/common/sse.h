@@ -1,7 +1,11 @@
 #define SSE_2(i, name) SSE_2_TMP(i, name)
-#define SSE_2_TMP(i, name)                           \
-  _mm_storeu_pd(&result_array[*array_index + i * 2], \
-                _ZGV##name(_mm_loadu_pd(&input_array[*array_index + i * 2])));
+#define SSE_2_TMP(i, name)                                                      \
+  if(ckl_pre_hook)                                                              \
+        ckl_pre_hook(ckl_pre_hook_args);                                        \
+  _mm_storeu_pd(&result_array[*array_index + i * 2],                            \
+                _ZGV##name(_mm_loadu_pd(&input_array[*array_index + i * 2])));  \
+  if(ckl_post_hook)                                                             \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define SSE_2__0(name)
 /*Call 1 SSE function for 2 doubles*/
@@ -30,7 +34,13 @@ SSE_2(7, name)
 
 /*For size = 2*i + (2-i)*/
 #define SSE_2_mask2(i, name) SSE_2_mask2_TMP(i, name)
-#define SSE_2_mask2_TMP(i, name)           \
-  SSE_2__##i(name) _mm_store_sd(           \
-      &result_array[*array_index + 2 * i], \
-      _ZGV##name(_mm_load_sd(&input_array[*array_index + 2 * i])));
+#define SSE_2_mask2_TMP(i, name)                                   \
+  SSE_2__##i(name)                                                 \
+  if(ckl_pre_hook)                                                 \
+        ckl_pre_hook(ckl_pre_hook_args);                           \
+  _mm_store_sd(                                                    \
+      &result_array[*array_index + 2 * i],                         \
+      _ZGV##name(_mm_load_sd(&input_array[*array_index + 2 * i])));\
+  if(ckl_post_hook)                                                \
+        ckl_post_hook(ckl_post_hook_args);
+

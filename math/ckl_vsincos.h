@@ -132,7 +132,7 @@ void ckl_vsincos(const double *input_array, double *result_array, double *result
         {
             unsigned int count = size >> 5;
             unsigned int rest = size & 31;
-            for (int i = 0; i < 2 * count; i++)
+            for (unsigned int i = 0; i < 2 * count; i++)
             {
                 AVX512_SINCOS_8__2;
                 *array_index += 16;
@@ -238,7 +238,7 @@ void ckl_vsincos(const double *input_array, double *result_array, double *result
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_SINCOS_4__2;
                 *array_index += 8;
@@ -290,7 +290,7 @@ void ckl_vsincos(const double *input_array, double *result_array, double *result
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_SINCOS_2__2;
                 *array_index += 4;
@@ -439,7 +439,7 @@ void ckl_vsincos(const double *input_array, double *result_array, double *result
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_SINCOS_2__2;
                 *array_index += 4;

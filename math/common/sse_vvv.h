@@ -3,9 +3,13 @@
 
 #define SSE_vvv_2(i, name) SSE_vvv_2_TMP(i, name)
 #define SSE_vvv_2_TMP(i, name)                                       \
+  if(ckl_pre_hook)                                                   \
+        ckl_pre_hook(ckl_pre_hook_args);                             \
   _ZGV##name(_mm_loadu_pd(&input_array[*array_index + 2 * i]),       \
              _mm_set_epi64x(SSE_vvv_ADDR(i, 1), SSE_vvv_ADDR(i, 0)), \
-             _mm_set_epi64x(SSE_vvv_ADDR1(i, 1), SSE_vvv_ADDR1(i, 0)));
+             _mm_set_epi64x(SSE_vvv_ADDR1(i, 1), SSE_vvv_ADDR1(i, 0)));\
+  if(ckl_post_hook)                                                   \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define SSE_vvv_2__0(name)
 /*Call 1 SSE function for 2 doubles*/
@@ -43,7 +47,11 @@
 #define SSE_vvv_2_mask2(i, name) SSE_vvv_2_mask2_TMP(i, name)
 #define SSE_vvv_2_mask2_TMP(i, name)                             \
   SSE_vvv_2__##i(name);                                          \
+  if(ckl_pre_hook)                                               \
+        ckl_pre_hook(ckl_pre_hook_args);                         \
   double tmp, tmp1;                                              \
   _ZGV##name(_mm_load_sd(&input_array[*array_index + 2 * i]),    \
              _mm_set_epi64x((uint64_t)&tmp, SSE_vvv_ADDR(i, 0)), \
-             _mm_set_epi64x((uint64_t)&tmp1, SSE_vvv_ADDR1(i, 0)));
+             _mm_set_epi64x((uint64_t)&tmp1, SSE_vvv_ADDR1(i, 0)));\
+  if(ckl_post_hook)                                               \
+        ckl_post_hook(ckl_post_hook_args);

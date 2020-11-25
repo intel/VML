@@ -133,7 +133,7 @@ void ckl_vcos(const double *input_array, double *result_array,
         {
             unsigned int count = size >> 5;
             unsigned int rest = size & 31;
-            for (int i = 0; i < 2 * count; i++)
+            for (unsigned int i = 0; i < 2 * count; i++)
             {
                 AVX512_8__2(NAME_AVX512_COS)
                 *array_index += 16;
@@ -238,7 +238,7 @@ void ckl_vcos(const double *input_array, double *result_array,
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_4__2(NAME_AVX2_COS)
                 *array_index += 8;
@@ -304,7 +304,9 @@ void ckl_vcos(const double *input_array, double *result_array,
             SSE_2_mask2(0, NAME_SSE_COS)
         }
         else if (size == 2)
+        {
             SSE_2__1(NAME_SSE_COS)
+        }
         else
         {
             AVX_4_mask2(0, NAME_AVX_COS, NAME_SSE_COS)
@@ -349,7 +351,7 @@ void ckl_vcos(const double *input_array, double *result_array,
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_2__2(NAME_SSE_COS)
                 *array_index += 4;
@@ -496,7 +498,7 @@ void ckl_vcos(const double *input_array, double *result_array,
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_2__2(NAME_SSE_COS)
                 *array_index += 4;

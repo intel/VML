@@ -101,7 +101,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         {
             unsigned int count = size >> 5;
             unsigned int rest = size & 31;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX512_SINCOSF_16__2;
                 *array_index += 32;
@@ -154,7 +154,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_SINCOSF_8__2;
                 *array_index += 16;
@@ -271,7 +271,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_SINCOSF_8__2;
                 *array_index += 16;
@@ -300,7 +300,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 //SSE_2__2
                 SSE_SINCOSF_4__2;
@@ -392,7 +392,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         {
             unsigned int count = size >> 3;
             unsigned int rest = size & 7;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 //SSE_2__2
                 SSE_SINCOSF_4__2;

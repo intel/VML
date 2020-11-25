@@ -194,7 +194,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             unsigned int count = size >> 4;
             unsigned int rest = size & 15;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX512_vv_8__2(NAME_AVX512_POW);
                 *array_index += 16;
@@ -640,7 +640,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_vv_4__1(NAME_AVX2_POW);
                 *array_index += 4;
@@ -669,7 +669,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             unsigned int count = size >> 6;
             unsigned int rest = size & 63;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AVX_vv_4__16(NAME_AVX2_POW);
                 *array_index += 64;
@@ -785,7 +785,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_vv_2__2(NAME_SSE_POW);
                 *array_index += 4;
@@ -838,7 +838,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             unsigned int count = size >> 2;
             unsigned int rest = size & 3;
-            for (int i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 SSE_vv_2__2(NAME_SSE_POW);
                 *array_index += 4;

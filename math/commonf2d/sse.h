@@ -1,8 +1,12 @@
 #define SSE_f2d_2(i, name) SSE_f2d_2_TMP(i, name)
 #define SSE_f2d_2_TMP(i, name)                                  \
+  if(ckl_pre_hook)                                              \
+        ckl_pre_hook(ckl_pre_hook_args);                        \
   _mm_storel_pi((__m64 *)(&result_array[*array_index + i * 2]), \
                 _mm_cvtpd_ps(_ZGV##name(_mm_cvtps_pd(           \
-                    _mm_loadu_ps(&input_array[*array_index + i * 2])))));
+                _mm_loadu_ps(&input_array[*array_index + i * 2])))));\
+ if(ckl_post_hook)                                               \
+        ckl_post_hook(ckl_post_hook_args);
 
 #define SSE_f2d_2__0(name)
 /*Call 1 SSE function for 2 doubles*/
@@ -32,6 +36,11 @@
 /*For size = 2*i + (2-i)*/
 #define SSE_f2d_2_mask2(i, name) SSE_f2d_2_mask2_TMP(i, name)
 #define SSE_f2d_2_mask2_TMP(i, name)                                                  \
-  SSE_f2d_2__##i(name) _mm_store_ss(&result_array[*array_index + 2 * i],              \
+  SSE_f2d_2__##i(name)                                                                \
+  if(ckl_pre_hook)                                                                    \
+        ckl_pre_hook(ckl_pre_hook_args);                                              \
+  _mm_store_ss(&result_array[*array_index + 2 * i],                                   \
                                     _mm_cvtpd_ps(_ZGV##name(_mm_cvtps_pd(_mm_load_ss( \
-                                        &input_array[*array_index + 2 * i])))));
+                                        &input_array[*array_index + 2 * i])))));      \
+  if(ckl_post_hook)                                                                   \
+        ckl_post_hook(ckl_post_hook_args);
