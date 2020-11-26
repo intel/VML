@@ -42,6 +42,8 @@ void ckl_vcos(const double *input_array, double *result_array,
 #define NAME_AVX2_COS dN4v_cos
 #define NAME_AVX_COS cN4v_cos
 #define NAME_SSE_COS bN2v_cos
+#define NAME_SCALAR_COS cos
+#define ckl_cos cos
 
     /************** ckl_vcos *****************/
     /*This function deal with size in 1~15*/
@@ -520,9 +522,12 @@ void ckl_vcos(const double *input_array, double *result_array,
     static inline void vcos_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = cos(input_array[i]);
+            SCALAR_1(0, NAME_SCALAR_COS);
+            *array_index += 1;
         }
     }
 

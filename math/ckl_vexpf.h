@@ -33,6 +33,8 @@ void ckl_vexpf(const float *input_array, float *result_array,
     __m256d _ZGVcN4v_exp(__m256d x);
     __m256d _ZGVdN4v_exp(__m256d x);
     __m512d _ZGVeN8v_exp(__m512d x);
+    #define NAME_SCALAR_EXPF expf
+    #define ckl_expf exp
 
 #include "commonf2d/avx.h"
 #include "commonf2d/avx512.h"
@@ -53,7 +55,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = expf(input_array[*array_index]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
         }
         else if (size == 2)
         {
@@ -62,7 +64,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 3)
         {
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
         else if (size == 4)
         {
@@ -71,7 +73,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 5)
         {
             AVX_f2d_4__1(NAME_AVX2_EXPF2D);
-            result_array[*array_index + 4] = expf(input_array[*array_index + 4]);
+            SCALAR_f2d_1(4, NAME_SCALAR_EXPF);
         }
         else if (size == 6)
         {
@@ -84,9 +86,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
             AVX_f2d_4__1(NAME_AVX2_EXPF2D);
             *array_index += 4;
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            // result_array[*array_index + 4] = expf(input_array[*array_index + 4]);
-            // result_array[*array_index + 5] = expf(input_array[*array_index + 5]);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
     }
 
@@ -97,7 +97,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = expf(input_array[*array_index]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
             // SSE_2_mask2(0, SSE_NAME)
         }
         else if (size == 2)
@@ -109,13 +109,13 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 3)
         {
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
         else if (size == 13)
         {
             AVX512_f2d_8__1(NAME_AVX512_EXPF2D);
             AVX_f2d_4_offset(8, NAME_AVX2_EXPF2D);
-            result_array[*array_index + 12] = expf(input_array[*array_index + 12]);
+            SCALAR_f2d_1(12, NAME_SCALAR_EXPF);
         }
         else if (size == 14)
         {
@@ -131,7 +131,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
             AVX_f2d_4_offset(8, NAME_AVX2_EXPF2D);
             *array_index += 12;
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
         else if (size == 12)
         {
@@ -143,7 +143,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
             AVX512_f2d_8__1(NAME_AVX512_EXPF2D);
             *array_index += 8;
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
         else if (size == 10)
         {
@@ -155,7 +155,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         {
             // AVX512_8_mask4(1, AVX2_NAME)
             AVX512_f2d_8__1(NAME_AVX512_EXPF2D);
-            result_array[*array_index + 8] = expf(input_array[*array_index + 8]);
+            SCALAR_f2d_1(8, NAME_SCALAR_EXPF);
         }
         else if (size == 8)
         {
@@ -164,7 +164,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 5)
         {
             AVX_f2d_4__1(NAME_AVX2_EXPF2D);
-            result_array[*array_index + 4] = expf(input_array[*array_index + 4]);
+            SCALAR_f2d_1(4, NAME_SCALAR_EXPF);
         }
         else if (size == 6)
         {
@@ -181,7 +181,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
             // result_array[*array_index + 4] = expf(input_array[*array_index + 4]);
             // result_array[*array_index + 5] = expf(input_array[*array_index + 5]);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
         else if (size == 4)
         {
@@ -244,7 +244,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = expf(input_array[*array_index]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
         }
         else if (size == 2)
         {
@@ -253,7 +253,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 3)
         {
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
     }
 
@@ -296,7 +296,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = expf(input_array[*array_index]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
         }
         else if (size == 2)
         {
@@ -305,7 +305,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 3)
         {
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
     }
 
@@ -348,7 +348,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = expf(input_array[*array_index]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
         }
         else if (size == 2)
         {
@@ -357,7 +357,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
         else if (size == 3)
         {
             SSE_f2d_2__1(NAME_SSE_EXPF2D);
-            result_array[*array_index + 2] = expf(input_array[*array_index + 2]);
+            SCALAR_f2d_1(2, NAME_SCALAR_EXPF);
         }
     }
 
@@ -394,9 +394,12 @@ void ckl_vexpf(const float *input_array, float *result_array,
     static inline void vexpf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = expf(input_array[i]);
+            SCALAR_f2d_1(0, NAME_SCALAR_EXPF);
+            *array_index += 1;
         }
     }
 

@@ -42,6 +42,9 @@ void ckl_vexp(const double *input_array, double *result_array,
 #define NAME_AVX2_EXP dN4v_exp
 #define NAME_AVX_EXP cN4v_exp
 #define NAME_SSE_EXP bN2v_exp
+#define NAME_SCALAR_EXP exp
+#define ckl_exp exp
+
 
     /************** ckl_vexp *****************/
     /*This function deal with size in 1~7*/
@@ -394,9 +397,12 @@ void ckl_vexp(const double *input_array, double *result_array,
     static inline void vexp_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = exp(input_array[i]);
+            SCALAR_1(0, NAME_SCALAR_EXP);
+            *array_index += 1;
         }
     }
 

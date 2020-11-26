@@ -461,9 +461,12 @@ void ckl_vsincos(const double *input_array, double *result_array, double *result
     static inline void vsincos_scalar(const double *input_array, double *result_array,
                                       double *result_array1, unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            sincos(input_array[i], &result_array[i], &result_array1[i]);
+            SCALARF_SINCOS_1(0);
+            *array_index += 1;
         }
     }
 

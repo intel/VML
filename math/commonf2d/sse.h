@@ -44,3 +44,11 @@
                                         &input_array[*array_index + 2 * i])))));      \
   if(ckl_post_hook)                                                                   \
         ckl_post_hook(ckl_post_hook_args);
+
+#define SCALAR_f2d_1(i, name) SCALAR_f2d_1_TMP(i, name)
+#define SCALAR_f2d_1_TMP(i, name)                                                  \
+    if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                       \
+    result_array[*array_index+i] = ckl_##name(input_array[*array_index+i]);    \
+    if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);

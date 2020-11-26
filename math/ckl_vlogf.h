@@ -42,6 +42,8 @@ void ckl_vlogf(const float *input_array, float *result_array,
 #define NAME_AVX2_LOGF dN8v_logf
 #define NAME_AVX_LOGF cN8v_logf
 #define NAME_SSE_LOGF bN4v_logf
+#define NAME_SCALAR_LOGF logf
+#define ckl_logf logf
 
     /************** ckl_vlogf *****************/
     /*This function deals with size in 1~3 */
@@ -51,19 +53,18 @@ void ckl_vlogf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
         }
         else if (size == 2)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
-            //SSE_f2d_2__1(bN2v_log)
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
         }
         else if (size == 3)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
-            result_array[*array_index + 2] = logf(input_array[*array_index + 2]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
+            SCALARF_1(2, NAME_SCALAR_LOGF);
         }
     }
 
@@ -75,20 +76,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         if (size == 7)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 6)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 5)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 4)
         {
@@ -113,20 +114,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         else if (size == 11)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
-            result_array[*array_index + 10] = logf(input_array[*array_index + 10]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
+            SCALARF_1(10, NAME_SCALAR_LOGF);
         }
         else if (size == 10)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
         }
         else if (size == 9)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
         }
         else if (size == 8)
         {
@@ -151,7 +152,7 @@ void ckl_vlogf(const float *input_array, float *result_array,
         {
             AVX512_16__1(NAME_AVX512_LOGF)
             AVX_8_offset(16, NAME_AVX2_LOGF);
-            result_array[*array_index + 24] = logf(input_array[*array_index + 24]);
+            SCALARF_1(24, NAME_SCALAR_LOGF);
         }
         else if (size == 24)
         {
@@ -160,28 +161,27 @@ void ckl_vlogf(const float *input_array, float *result_array,
         }
         else if (size == 23)
         {
-            //AVX512_16_mask8(1, AVX2_NAME)
             AVX512_16__1(NAME_AVX512_LOGF)
             *array_index += 16;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 22)
         {
             AVX512_16__1(NAME_AVX512_LOGF)
             *array_index += 16;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 21)
         {
             AVX512_16__1(NAME_AVX512_LOGF)
             *array_index += 16;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 20)
         {
@@ -192,20 +192,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         else if (size == 19)
         {
             AVX512_16__1(NAME_AVX512_LOGF)
-            result_array[*array_index + 16] = logf(input_array[*array_index + 16]);
-            result_array[*array_index + 17] = logf(input_array[*array_index + 17]);
-            result_array[*array_index + 18] = logf(input_array[*array_index + 18]);
+            SCALARF_1(16, NAME_SCALAR_LOGF);
+            SCALARF_1(17, NAME_SCALAR_LOGF);
+            SCALARF_1(18, NAME_SCALAR_LOGF);
         }
         else if (size == 18)
         {
             AVX512_16__1(NAME_AVX512_LOGF)
-            result_array[*array_index + 16] = logf(input_array[*array_index + 16]);
-            result_array[*array_index + 17] = logf(input_array[*array_index + 17]);
+            SCALARF_1(16, NAME_SCALAR_LOGF);
+            SCALARF_1(17, NAME_SCALAR_LOGF);
         }
         else if (size == 17)
         {
             AVX512_16__1(NAME_AVX512_LOGF)
-            result_array[*array_index + 16] = logf(input_array[*array_index + 16]);
+            SCALARF_1(16, NAME_SCALAR_LOGF);
         }
         else if (size == 16)
         {
@@ -251,18 +251,18 @@ void ckl_vlogf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
         }
         else if (size == 2)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
         }
         else if (size == 3)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
-            result_array[*array_index + 2] = logf(input_array[*array_index + 2]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
+            SCALARF_1(2, NAME_SCALAR_LOGF);
         }
     }
 
@@ -274,20 +274,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         if (size == 7)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 6)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 5)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 4)
         {
@@ -296,7 +296,6 @@ void ckl_vlogf(const float *input_array, float *result_array,
         else
         {
             vlogf_avx2_3(input_array, result_array, size, array_index);
-            //AVX2_8_mask4(0, SSE_NAME)
         }
     }
 
@@ -310,24 +309,24 @@ void ckl_vlogf(const float *input_array, float *result_array,
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 14)
         {
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 13)
         {
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 14)
         {
@@ -338,20 +337,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         else if (size == 11)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
-            result_array[*array_index + 10] = logf(input_array[*array_index + 10]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
+            SCALARF_1(10, NAME_SCALAR_LOGF);
         }
         else if (size == 10)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
         }
         else if (size == 9)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
         }
         else if (size == 8)
         {
@@ -402,18 +401,18 @@ void ckl_vlogf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
         }
         else if (size == 2)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
         }
         else if (size == 3)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
-            result_array[*array_index + 2] = logf(input_array[*array_index + 2]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
+            SCALARF_1(2, NAME_SCALAR_LOGF);
         }
     }
 
@@ -427,20 +426,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         if (size == 7)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 6)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 5)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 4)
         {
@@ -463,24 +462,24 @@ void ckl_vlogf(const float *input_array, float *result_array,
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 14)
         {
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 13)
         {
             AVX_8__1(NAME_AVX2_LOGF)
             *array_index += 8;
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 14)
         {
@@ -491,20 +490,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         else if (size == 11)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
-            result_array[*array_index + 10] = logf(input_array[*array_index + 10]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
+            SCALARF_1(10, NAME_SCALAR_LOGF);
         }
         else if (size == 10)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
-            result_array[*array_index + 9] = logf(input_array[*array_index + 9]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
+            SCALARF_1(9, NAME_SCALAR_LOGF);
         }
         else if (size == 9)
         {
             AVX_8__1(NAME_AVX2_LOGF)
-            result_array[*array_index + 8] = logf(input_array[*array_index + 8]);
+            SCALARF_1(8, NAME_SCALAR_LOGF);
         }
         else if (size == 8)
         {
@@ -555,18 +554,18 @@ void ckl_vlogf(const float *input_array, float *result_array,
     {
         if (size == 1)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
         }
         else if (size == 2)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
         }
         else if (size == 3)
         {
-            result_array[*array_index] = logf(input_array[*array_index]);
-            result_array[*array_index + 1] = logf(input_array[*array_index + 1]);
-            result_array[*array_index + 2] = logf(input_array[*array_index + 2]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            SCALARF_1(1, NAME_SCALAR_LOGF);
+            SCALARF_1(2, NAME_SCALAR_LOGF);
         }
     }
 
@@ -580,20 +579,20 @@ void ckl_vlogf(const float *input_array, float *result_array,
         if (size == 7)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
-            result_array[*array_index + 6] = logf(input_array[*array_index + 6]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
+            SCALARF_1(6, NAME_SCALAR_LOGF);
         }
         else if (size == 6)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
-            result_array[*array_index + 5] = logf(input_array[*array_index + 5]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
+            SCALARF_1(5, NAME_SCALAR_LOGF);
         }
         else if (size == 5)
         {
             SSE_4__1(NAME_SSE_LOGF)
-            result_array[*array_index + 4] = logf(input_array[*array_index + 4]);
+            SCALARF_1(4, NAME_SCALAR_LOGF);
         }
         else if (size == 4)
         {
@@ -639,9 +638,12 @@ void ckl_vlogf(const float *input_array, float *result_array,
     static inline void vlogf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = logf(input_array[i]);
+            SCALARF_1(0, NAME_SCALAR_LOGF);
+            *array_index += 1;
         }
     }
 

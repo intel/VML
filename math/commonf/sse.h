@@ -31,3 +31,11 @@ SSE_4(2, name)
 /*Call 4 SSE function for 4 floats*/
 #define SSE_4__4(name) SSE_4__3(name) \
 SSE_4(3, name)
+
+#define SCALARF_1(i, name) SCALARF_1_TMP(i, name)
+#define SCALARF_1_TMP(i, name)                                                  \
+    if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                       \
+    result_array[*array_index+i] = ckl_##name(input_array[*array_index+i]);    \
+    if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);

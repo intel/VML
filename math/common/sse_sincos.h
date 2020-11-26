@@ -57,3 +57,12 @@
       _ZGVbN2v_cos(input2_mask_value##i));                                        \
   if(ckl_post_hook)                                                               \
         ckl_post_hook(ckl_post_hook_args);
+
+#define SCALARF_SINCOS_1(i) SCALARF_SINCOS_1_TMP(i)
+#define SCALARF_SINCOS_1_TMP(i)                                                \
+    if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                       \
+        sincos(input_array[*array_index+i], &result_array[*array_index+i],     \
+                                            &result_array1[*array_index+i]);   \
+    if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);

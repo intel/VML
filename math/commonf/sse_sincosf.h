@@ -39,3 +39,12 @@
 #define SSE_SINCOSF_4__4 \
     SSE_SINCOSF_4__3     \
     SSE_SINCOSF_4(3)
+
+#define SCALARF_SINCOSF_1(i) SCALARF_SINCOSF_1_TMP(i)
+#define SCALARF_SINCOSF_1_TMP(i)                                               \
+    if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                       \
+        sincosf(input_array[*array_index+i], &result_array[*array_index+i],     \
+                                               &result_array1[*array_index+i]);\
+    if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);

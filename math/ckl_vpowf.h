@@ -42,6 +42,8 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
 #define NAME_AVX2_POWF2D dN4vv_pow
 #define NAME_AVX_POWF2D cN4vv_pow
 #define NAME_SSE_POWF2D bN2vv_pow
+#define NAME_SCALAR_POWF powf
+#define ckl_powf pow
 
     /************** ckl_vpowf *****************/
     /*This function deal with size in 1~7*/
@@ -54,7 +56,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     {
         if (size == 1)
         {
-            result_array[*array_index] = powf(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
         }
         else if (size == 2)
         {
@@ -63,7 +65,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 3)
         {
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
         else if (size == 4)
         {
@@ -72,7 +74,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 5)
         {
             AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
-            result_array[*array_index + 4] = powf(input_array[*array_index + 4], input_array1[*array_index + 4]);
+            SCALAR_vv_f2d_1(4, NAME_SCALAR_POWF);
         }
         else if (size == 6)
         {
@@ -85,7 +87,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
             AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
             *array_index += 4;
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
     }
 
@@ -96,7 +98,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     {
         if (size == 1)
         {
-            result_array[*array_index] = powf(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
             // SSE_2_mask2(0, SSE_NAME)
         }
         else if (size == 2)
@@ -106,13 +108,13 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 3)
         {
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
         else if (size == 13)
         {
             AVX512_vv_f2d_8__1(NAME_AVX512_POWF2D);
             AVX_vv_f2d_4_offset(8, NAME_AVX2_POWF2D);
-            result_array[*array_index + 12] = powf(input_array[*array_index + 12], input_array1[*array_index + 12]);
+            SCALAR_vv_f2d_1(12, NAME_SCALAR_POWF);
         }
         else if (size == 14)
         {
@@ -128,7 +130,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
             AVX_vv_f2d_4_offset(8, NAME_AVX2_POWF2D);
             *array_index += 12;
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
         else if (size == 12)
         {
@@ -140,7 +142,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
             AVX512_vv_f2d_8__1(NAME_AVX512_POWF2D);
             *array_index += 8;
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
         else if (size == 10)
         {
@@ -152,7 +154,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         {
             // AVX512_8_mask4(1, AVX2_NAME)
             AVX512_vv_f2d_8__1(NAME_AVX512_POWF2D);
-            result_array[*array_index + 8] = powf(input_array[*array_index + 8], input_array1[*array_index + 8]);
+            SCALAR_vv_f2d_1(8, NAME_SCALAR_POWF);
         }
         else if (size == 8)
         {
@@ -161,7 +163,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 5)
         {
             AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
-            result_array[*array_index + 4] = powf(input_array[*array_index + 4], input_array1[*array_index + 4]);
+            SCALAR_vv_f2d_1(4, NAME_SCALAR_POWF);
         }
         else if (size == 6)
         {
@@ -174,7 +176,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
             AVX_vv_f2d_4__1(NAME_AVX2_POWF2D);
             *array_index += 4;
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
         else if (size == 4)
         {
@@ -242,7 +244,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     {
         if (size == 1)
         {
-            result_array[*array_index] = powf(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
         }
         else if (size == 2)
         {
@@ -251,7 +253,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 3)
         {
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
     }
 
@@ -295,7 +297,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     {
         if (size == 1)
         {
-            result_array[*array_index] = powf(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
         }
         else if (size == 2)
         {
@@ -304,7 +306,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 3)
         {
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
     }
 
@@ -348,7 +350,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     {
         if (size == 1)
         {
-            result_array[*array_index] = powf(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
         }
         else if (size == 2)
         {
@@ -357,7 +359,7 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
         else if (size == 3)
         {
             SSE_vv_f2d_2__1(NAME_SSE_POWF2D);
-            result_array[*array_index + 2] = powf(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_f2d_1(2, NAME_SCALAR_POWF);
         }
     }
 
@@ -394,9 +396,12 @@ void ckl_vpowf(const float *input_array, const float *input_array1, float *resul
     static inline void vpowf_scalar(const float *input_array, const float *input_array1,
                                     float *result_array, unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = powf(input_array[i], input_array1[i]);
+            SCALAR_vv_f2d_1(0, NAME_SCALAR_POWF);
+            *array_index += 1;
         }
     }
 

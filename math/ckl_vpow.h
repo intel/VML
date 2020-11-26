@@ -42,6 +42,8 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 #define NAME_AVX2_POW dN4vv_pow
 #define NAME_AVX_POW cN4vv_pow
 #define NAME_SSE_POW bN2vv_pow
+#define NAME_SCALAR_POW pow
+#define ckl_pow pow
 
     /************** ckl_vpow *****************/
     /*This function deal with size in 1~7*/
@@ -54,7 +56,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     {
         if (size == 1)
         {
-            result_array[*array_index] = pow(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
         }
         else if (size == 2)
         {
@@ -63,7 +65,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 3)
         {
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 4)
         {
@@ -72,7 +74,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 5)
         {
             AVX_vv_4__1(NAME_AVX2_POW);
-            result_array[*array_index + 4] = pow(input_array[*array_index + 4], input_array1[*array_index + 4]);
+            SCALAR_vv_1(4, NAME_SCALAR_POW);
         }
         else if (size == 6)
         {
@@ -85,7 +87,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__1(NAME_AVX2_POW);
             *array_index += 4;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
     }
 
@@ -97,7 +99,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     {
         if (size == 1)
         {
-            result_array[*array_index] = pow(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
             //SSE_vv_2_mask2(0, NAME_SSE_POW)
         }
         else if (size == 2)
@@ -107,13 +109,13 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 3)
         {
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 13)
         {
             AVX512_vv_8__1(NAME_AVX512_POW);
             AVX_vv_4_offset(8, NAME_AVX2_POW);
-            result_array[*array_index + 12] = pow(input_array[*array_index + 12], input_array1[*array_index + 12]);
+            SCALAR_vv_1(12, NAME_SCALAR_POW);
         }
         else if (size == 14)
         {
@@ -129,7 +131,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4_offset(8, NAME_AVX2_POW);
             *array_index += 12;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 12)
         {
@@ -141,7 +143,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX512_vv_8__1(NAME_AVX512_POW);
             *array_index += 8;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 10)
         {
@@ -153,7 +155,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         {
             // AVX512_8_mask4(1, AVX2_NAME)
             AVX512_vv_8__1(NAME_AVX512_POW);
-            result_array[*array_index + 8] = pow(input_array[*array_index + 8], input_array1[*array_index + 8]);
+            SCALAR_vv_1(8, NAME_SCALAR_POW);
         }
         else if (size == 8)
         {
@@ -162,7 +164,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 5)
         {
             AVX_vv_4__1(NAME_AVX2_POW);
-            result_array[*array_index + 4] = pow(input_array[*array_index + 4], input_array1[*array_index + 4]);
+            SCALAR_vv_1(4, NAME_SCALAR_POW);
         }
         else if (size == 6)
         {
@@ -175,7 +177,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__1(NAME_AVX2_POW);
             *array_index += 4;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 4)
         {
@@ -242,7 +244,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     {
         if (size == 1)
         {
-            result_array[*array_index] = pow(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
         }
         else if (size == 2)
         {
@@ -251,7 +253,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 3)
         {
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
     }
 
@@ -265,7 +267,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__1(NAME_AVX2_POW);
             *array_index += 4;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 6)
         {
@@ -276,7 +278,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 5)
         {
             AVX_vv_4__1(NAME_AVX2_POW);
-            result_array[*array_index + 4] = pow(input_array[*array_index + 4], input_array1[*array_index + 4]);
+            SCALAR_vv_1(4, NAME_SCALAR_POW);
         }
         else if (size == 4)
         {
@@ -298,7 +300,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__3(NAME_AVX2_POW);
             *array_index += 12;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 14)
         {
@@ -309,7 +311,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 13)
         {
             AVX_vv_4__3(NAME_AVX2_POW);
-            result_array[*array_index + 12] = pow(input_array[*array_index + 12], input_array1[*array_index + 12]);
+            SCALAR_vv_1(12, NAME_SCALAR_POW);
         }
         else if (size == 12)
         {
@@ -320,7 +322,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__2(NAME_AVX2_POW);
             *array_index += 8;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 10)
         {
@@ -331,7 +333,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 9)
         {
             AVX_vv_4__2(NAME_AVX2_POW);
-            result_array[*array_index + 8] = pow(input_array[*array_index + 8], input_array1[*array_index + 8]);
+            SCALAR_vv_1(8, NAME_SCALAR_POW);
         }
         else if (size == 8)
         {
@@ -353,7 +355,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__7(NAME_AVX2_POW);
             *array_index += 28;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 30)
         {
@@ -364,7 +366,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 29)
         {
             AVX_vv_4__7(NAME_AVX2_POW);
-            result_array[*array_index + 28] = pow(input_array[*array_index + 28], input_array1[*array_index + 28]);
+            SCALAR_vv_1(28, NAME_SCALAR_POW);
         }
         else if (size == 28)
         {
@@ -375,7 +377,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__6(NAME_AVX2_POW);
             *array_index += 24;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 26)
         {
@@ -386,7 +388,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 25)
         {
             AVX_vv_4__6(NAME_AVX2_POW);
-            result_array[*array_index + 24] = pow(input_array[*array_index + 24], input_array1[*array_index + 24]);
+            SCALAR_vv_1(24, NAME_SCALAR_POW);
         }
         else if (size == 24)
         {
@@ -397,7 +399,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__5(NAME_AVX2_POW);
             *array_index += 20;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 22)
         {
@@ -408,7 +410,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 21)
         {
             AVX_vv_4__5(NAME_AVX2_POW);
-            result_array[*array_index + 20] = pow(input_array[*array_index + 20], input_array1[*array_index + 20]);
+            SCALAR_vv_1(20, NAME_SCALAR_POW);
         }
         else if (size == 20)
         {
@@ -419,7 +421,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__4(NAME_AVX2_POW);
             *array_index += 16;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 18)
         {
@@ -430,7 +432,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 17)
         {
             AVX_vv_4__4(NAME_AVX2_POW);
-            result_array[*array_index + 16] = pow(input_array[*array_index + 16], input_array1[*array_index + 16]);
+            SCALAR_vv_1(16, NAME_SCALAR_POW);
         }
         else if (size == 16)
         {
@@ -452,7 +454,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__15(NAME_AVX2_POW);
             *array_index += 60;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 62)
         {
@@ -463,7 +465,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 61)
         {
             AVX_vv_4__15(NAME_AVX2_POW);
-            result_array[*array_index + 60] = pow(input_array[*array_index + 60], input_array1[*array_index + 60]);
+            SCALAR_vv_1(60, NAME_SCALAR_POW);
         }
         else if (size == 60)
         {
@@ -474,7 +476,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__14(NAME_AVX2_POW);
             *array_index += 56;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 58)
         {
@@ -485,7 +487,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 57)
         {
             AVX_vv_4__14(NAME_AVX2_POW);
-            result_array[*array_index + 56] = pow(input_array[*array_index + 56], input_array1[*array_index + 56]);
+            SCALAR_vv_1(56, NAME_SCALAR_POW);
         }
         else if (size == 56)
         {
@@ -496,7 +498,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__13(NAME_AVX2_POW);
             *array_index += 52;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 54)
         {
@@ -507,7 +509,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 53)
         {
             AVX_vv_4__13(NAME_AVX2_POW);
-            result_array[*array_index + 52] = pow(input_array[*array_index + 52], input_array1[*array_index + 52]);
+            SCALAR_vv_1(52, NAME_SCALAR_POW);
         }
         else if (size == 52)
         {
@@ -518,7 +520,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__12(NAME_AVX2_POW);
             *array_index += 48;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 50)
         {
@@ -529,7 +531,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 49)
         {
             AVX_vv_4__12(NAME_AVX2_POW);
-            result_array[*array_index + 48] = pow(input_array[*array_index + 48], input_array1[*array_index + 48]);
+            SCALAR_vv_1(48, NAME_SCALAR_POW);
         }
         else if (size == 48)
         {
@@ -540,7 +542,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__11(NAME_AVX2_POW);
             *array_index += 44;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 46)
         {
@@ -551,7 +553,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 45)
         {
             AVX_vv_4__11(NAME_AVX2_POW);
-            result_array[*array_index + 44] = pow(input_array[*array_index + 44], input_array1[*array_index + 44]);
+            SCALAR_vv_1(44, NAME_SCALAR_POW);
         }
         else if (size == 44)
         {
@@ -562,7 +564,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__10(NAME_AVX2_POW);
             *array_index += 40;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 42)
         {
@@ -573,7 +575,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 41)
         {
             AVX_vv_4__10(NAME_AVX2_POW);
-            result_array[*array_index + 40] = pow(input_array[*array_index + 40], input_array1[*array_index + 40]);
+            SCALAR_vv_1(40, NAME_SCALAR_POW);
         }
         else if (size == 40)
         {
@@ -584,7 +586,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__9(NAME_AVX2_POW);
             *array_index += 36;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 38)
         {
@@ -595,7 +597,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 37)
         {
             AVX_vv_4__9(NAME_AVX2_POW);
-            result_array[*array_index + 36] = pow(input_array[*array_index + 36], input_array1[*array_index + 36]);
+            SCALAR_vv_1(36, NAME_SCALAR_POW);
         }
         else if (size == 36)
         {
@@ -606,7 +608,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
             AVX_vv_4__8(NAME_AVX2_POW);
             *array_index += 32;
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
         else if (size == 34)
         {
@@ -617,7 +619,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 33)
         {
             AVX_vv_4__8(NAME_AVX2_POW);
-            result_array[*array_index + 32] = pow(input_array[*array_index + 32], input_array1[*array_index + 32]);
+            SCALAR_vv_1(32, NAME_SCALAR_POW);
         }
         else if (size == 32)
         {
@@ -761,7 +763,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     {
         if (size == 1)
         {
-            result_array[*array_index] = pow(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
         }
         else if (size == 2)
         {
@@ -770,7 +772,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 3)
         {
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
     }
 
@@ -814,7 +816,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     {
         if (size == 1)
         {
-            result_array[*array_index] = pow(input_array[*array_index], input_array1[*array_index]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
         }
         else if (size == 2)
         {
@@ -823,7 +825,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         else if (size == 3)
         {
             SSE_vv_2__1(NAME_SSE_POW);
-            result_array[*array_index + 2] = pow(input_array[*array_index + 2], input_array1[*array_index + 2]);
+            SCALAR_vv_1(2, NAME_SCALAR_POW);
         }
     }
 
@@ -860,9 +862,12 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     static inline void vpow_scalar(const double *input_array, const double *input_array1, double *result_array,
                                    unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = pow(input_array[i], input_array1[i]);
+            SCALAR_vv_1(0, NAME_SCALAR_POW);
+            *array_index += 1;
         }
     }
 

@@ -42,6 +42,8 @@ void ckl_vlog(const double *input_array, double *result_array,
 #define NAME_AVX2_LOG dN4v_log
 #define NAME_AVX_LOG cN4v_log
 #define NAME_SSE_LOG bN2v_log
+#define NAME_SCALAR_LOG log
+#define ckl_log log
 
     /************** ckl_vlog *****************/
     /*This function deal with size in 1~7*/
@@ -394,9 +396,12 @@ void ckl_vlog(const double *input_array, double *result_array,
     static inline void vlog_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = log(input_array[i]);
+            SCALAR_1(0, NAME_SCALAR_LOG);
+            *array_index += 1;
         }
     }
 

@@ -34,6 +34,8 @@ void ckl_vsinf(const float *input_array, float *result_array,
     __m256 _ZGVdN8v_sinf(__m256 x);
     __m512 _ZGVeN16v_sinf(__m512 x);
     __m128d _ZGVbN2v_sin(__m128d x);
+    #define NAME_SCALAR_SINF sinf
+    #define ckl_sinf sinf
 
 #include "commonf/avx.h"
 #include "commonf/avx512.h"
@@ -416,9 +418,12 @@ void ckl_vsinf(const float *input_array, float *result_array,
     static inline void vsinf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = sinf(input_array[i]);
+            SCALARF_1(0, NAME_SCALAR_SINF);
+            *array_index += 1;
         }
     }
 

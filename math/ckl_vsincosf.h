@@ -416,12 +416,14 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
     static inline void vsincosf_scalar(const float *input_array, float *result_array, float *result_array1,
                                        unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            sincosf(input_array[i], &result_array[i], &result_array1[i]);
+            SCALARF_SINCOSF_1(0);
+            *array_index += 1;
         }
     }
-
 #ifdef __cplusplus
 }
 #endif

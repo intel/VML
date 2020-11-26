@@ -45,6 +45,8 @@ void ckl_vcosf(const float *input_array, float *result_array,
 #define NAME_AVX_COSF cN8v_cosf
 #define NAME_SSE_COSF bN4v_cosf
 #define NAME_SSE_COSF2D bN2v_cos
+#define NAME_SCALAR_COSF cosf
+#define ckl_cosf cosf
 
     /************** ckl_vcosf *****************/
     /*This function deals with size in 1~31 */
@@ -416,9 +418,12 @@ void ckl_vcosf(const float *input_array, float *result_array,
     static inline void vcosf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = cosf(input_array[i]);
+            SCALARF_1(0, NAME_SCALAR_COSF);
+            *array_index += 1;
         }
     }
 

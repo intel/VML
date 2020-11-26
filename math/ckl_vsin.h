@@ -42,6 +42,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 #define NAME_AVX2_SIN dN4v_sin
 #define NAME_AVX_SIN cN4v_sin
 #define NAME_SSE_SIN bN2v_sin
+#define NAME_SCALAR_SIN sin
+#define ckl_sin sin
 
     /************** ckl_vsin *****************/
     /*This function deal with size in 1~15*/
@@ -520,9 +522,12 @@ void ckl_vsin(const double *input_array, double *result_array,
     static inline void vsin_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
+        int index = 0;
+        int *array_index = &index;
         for (unsigned int i = 0; i < size; i++)
         {
-            result_array[i] = sin(input_array[i]);
+            SCALAR_1(0, NAME_SCALAR_SIN);
+            *array_index += 1;
         }
     }
 

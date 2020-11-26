@@ -53,3 +53,12 @@
   if(ckl_post_hook)                                                  \
         ckl_post_hook(ckl_post_hook_args);
   
+  #define SCALAR_vv_1(i, name) SCALAR_vv_1_TMP(i, name)
+  #define SCALAR_vv_1_TMP(i, name)                                             \
+    if(ckl_pre_hook)                                                           \
+        ckl_pre_hook(ckl_pre_hook_args);                                       \
+    result_array[*array_index+i] = ckl_##name(input_array[*array_index+i],     \
+                                              input_array1[*array_index+i]);   \
+    if(ckl_post_hook)                                                          \
+        ckl_post_hook(ckl_post_hook_args);
+
