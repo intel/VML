@@ -49,7 +49,7 @@ static int almostEquals(FLOAT *n1, FLOAT *n2)
   }
   // printf("bias2 - bias2=%d\n",
   //       (bias1 >= bias2) ? (bias1 - bias2) : (bias2 - bias1));
-  return ((bias1 >= bias2) ? (bias1 - bias2) : (bias2 - bias1)) <= 4;
+  return ((bias1 >= bias2) ? (bias1 - bias2) : (bias2 - bias1)) <= 3;
 }
 
 unsigned int round_up(unsigned int num, unsigned int factor)
@@ -114,7 +114,13 @@ int main(int argc, char *argv[])
 
   for (unsigned int i = 0; i < real_array_size / dim; i++)
 #ifdef POW
+#if defined(TEST_SCALAR_ARRAY)
+    fp_vector(input_array[i], input_array1 + i * dim, result_array_vector + i * dim, dim);
+#elif defined(TEST_ARRAY_SCALAR)
+    fp_vector(input_array + i * dim, input_array1[i], result_array_vector + i * dim, dim);
+#else
     fp_vector(input_array + i * dim, input_array1 + i * dim, result_array_vector + i * dim, dim);
+#endif
 #endif
 #ifdef SINCOS
   fp_vector(input_array + i * dim, result_array_vector + i * dim, result_array_vector1 + i * dim, dim);
@@ -126,7 +132,13 @@ int main(int argc, char *argv[])
   for (unsigned int i = 0; i < real_array_size; i++)
   {
 #ifdef POW
+#if defined(TEST_SCALAR_ARRAY)
+    result_array_scalar[i] = fp_scalar(input_array[i/dim], input_array1[i]);
+#elif defined(TEST_ARRAY_SCALAR)
+    result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i/dim]);
+#else 
     result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i]);
+#endif
 #endif
 #ifdef SINCOS
     fp_scalar(input_array[i], &result_array_scalar[i], &result_array_scalar1[i]);

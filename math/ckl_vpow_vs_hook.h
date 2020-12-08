@@ -1,5 +1,5 @@
-#ifndef CKL_VPOW_H
-#define CKL_VPOW_H
+#ifndef CKL_VPOW_VS_HOOK_H
+#define CKL_VPOW_VS_HOOK_H
 
 #ifdef __cplusplus
 extern "C"
@@ -7,33 +7,42 @@ extern "C"
 #endif
 
 #include "ckl_common.h"
-    typedef void (*ckl_vpow_func_t)(const double *, const double *, double *, unsigned int);
-    static inline void vpow_avx512(const double *input_array, const double *input_array1,
-                                   double *result_array, unsigned int size);
-    static inline void vpow_avx2(const double *input_array, const double *input_array1,
-                                 double *result_array, unsigned int size);
-    static inline void vpow_avx(const double *input_array, const double *input_array1,
-                                double *result_array, unsigned int size);
-    static inline void vpow_sse(const double *input_array, const double *input_array1,
-                                double *result_array, unsigned int size);
-    static inline void vpow_scalar(const double *input_array, const double *input_array1,
-                                   double *result_array, unsigned int size);
+    typedef void (*ckl_vpow_vs_hook_func_t)(const double *, const double, double *, unsigned int, 
+    ckl_hook_func_t, void *, ckl_hook_func_t, void *);
+    static inline void vpow_vs_hook_avx512(const double *input_array, const double input_value,
+                                   double *result_array, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vpow_vs_hook_avx2(const double *input_array, const double input_value,
+                                 double *result_array, unsigned int size, ckl_hook_func_t pre_hook, 
+                                 void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vpow_vs_hook_avx(const double *input_array, const double input_value,
+                                double *result_array, unsigned int size, ckl_hook_func_t pre_hook, 
+                                void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vpow_vs_hook_sse(const double *input_array, const double input_value,
+                                double *result_array, unsigned int size, ckl_hook_func_t pre_hook, 
+                                void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vpow_vs_hook_scalar(const double *input_array, const double input_value,
+                                   double *result_array, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void ckl_vpow(const double *input_array, const double *input_array1, double *result_array,
-                  unsigned int size) __attribute__((ifunc("vpow_ifunc")));
+    void ckl_vpow_vs_hook(const double *input_array, const double input_value, double *result_array,
+                  unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, 
+                  ckl_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vpow_vs_hook_ifunc")));
 #else
-void ckl_vpow(const double *input_array, const double *input_array1, double *result_array,
-              unsigned int size);
+void ckl_vpow_vs_hook(const double *input_array, const double input_value, double *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, 
+              ckl_hook_func_t post_hook, void * post_args);
 #endif
 
 #include "ckl_ifunc.h"
-    RESOLVE_FUNC(ckl_vpow_func_t, vpow, ckl_vpow)
+    RESOLVE_FUNC(ckl_vpow_vs_hook_func_t, vpow_vs_hook, ckl_vpow_vs_hook)
 
     __m128d _ZGVbN2vv_pow(__m128d x, __m128d y);
     __m256d _ZGVcN4vv_pow(__m256d x, __m256d y);
     __m256d _ZGVdN4vv_pow(__m256d x, __m256d y);
     __m512d _ZGVeN8vv_pow(__m512d x, __m512d y);
 
+#define ARRAY_SCALAR 1
 #define VV 1
 #include "common/ops.h"
 
@@ -45,16 +54,20 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 #ifndef ckl_pow
 #define ckl_pow pow
 #endif
-#define OP1 
-#define OP2 
+#define OP1 PRE_HOOK_OP(pre_hook, pre_args) 
+#define OP2 POST_HOOK_OP(post_hook, post_args)
     /************** ckl_vpow *****************/
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX512
-    vpow_avx512_7(const double *input_array,
-                  const double *input_array1,
+    vpow_vs_hook_avx512_7(const double *input_array,
+                  const double input_value,
                   double *result_array,
                   int size,
-                  int *array_index)
+                  int *array_index,
+                  ckl_hook_func_t pre_hook, 
+                  void * pre_args, 
+                  ckl_hook_func_t post_hook, 
+                  void * post_args)
     {
         if (size == 1)
         {
@@ -95,9 +108,13 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX512
-    vpow_avx512_15(const double *input_array, const double *input_array1,
+    vpow_vs_hook_avx512_15(const double *input_array, const double input_value,
                    double *result_array, int size,
-                   int *array_index)
+                   int *array_index,
+                   ckl_hook_func_t pre_hook, 
+                   void * pre_args, 
+                   ckl_hook_func_t post_hook, 
+                   void * post_args)
     {
         if (size == 1)
         {
@@ -188,10 +205,12 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
     }
 
     static inline void __CKL_FN_ATTR_AVX512 
-    vpow_avx512_16_group(const double *input_array,
-                              const double *input_array1,
+    vpow_vs_hook_avx512_16_group(const double *input_array,
+                              const double input_value,
                               double *result_array,
-                              unsigned int size)
+                              unsigned int size, ckl_hook_func_t pre_hook, 
+                              void * pre_args, ckl_hook_func_t post_hook, 
+                              void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -205,8 +224,8 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
                 *array_index += 16;
             }
             if (rest)
-                vpow_avx512_15(input_array, input_array1, result_array, rest, 
-                array_index);
+                vpow_vs_hook_avx512_15(input_array, input_value, result_array, rest, 
+                array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -214,22 +233,26 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx512_15(input_array, input_array1, result_array, size, 
-            array_index);
+            vpow_vs_hook_avx512_15(input_array, input_value, result_array, size, 
+            array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __CKL_FN_ATTR_AVX512 vpow_avx512(const double *input_array,
-                                                        const double *input_array1,
+    static inline void __CKL_FN_ATTR_AVX512 vpow_vs_hook_avx512(const double *input_array,
+                                                        const double input_value,
                                                         double *result_array,
-                                                        unsigned int size)
+                                                        unsigned int size, 
+                                                        ckl_hook_func_t pre_hook, 
+                                                        void * pre_args, 
+                                                        ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 8)
         {
-            vpow_avx512_16_group(input_array, input_array1, result_array, size);
+            vpow_vs_hook_avx512_16_group(input_array, input_value, result_array, size, 
+            pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -237,16 +260,17 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx512_7(input_array, input_array1, result_array, size, 
-            array_index);
+            vpow_vs_hook_avx512_7(input_array, input_value, result_array, size, 
+            array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vpow *****************/
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_3(const double *input_array, const double *input_array1, double *result_array, int size,
-                int *array_index)
+    vpow_vs_hook_avx2_3(const double *input_array, const double input_value, double *result_array, int size,
+                int *array_index,ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                void * post_args)
     {
         if (size == 1)
         {
@@ -265,8 +289,9 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_7(const double *input_array, const double *input_array1, double *result_array, int size,
-                int *array_index)
+    vpow_vs_hook_avx2_7(const double *input_array, const double input_value, double *result_array, int size,
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                void * post_args)
     {
         if (size == 7)
         {
@@ -292,14 +317,15 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_3(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_3(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_15(const double *input_array, const double *input_array1, double *result_array, int size,
-                 int *array_index)
+    vpow_vs_hook_avx2_15(const double *input_array, const double input_value, double *result_array, int size,
+                 int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                 void * post_args)
     {
         if (size == 15)
         {
@@ -347,14 +373,15 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_7(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_7(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /*This function deal with size in 1~31*/
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_31(const double *input_array, const double *input_array1, double *result_array, int size,
-                 int *array_index)
+    vpow_vs_hook_avx2_31(const double *input_array, const double input_value, double *result_array, int size,
+                 int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                 void * post_args)
     {
         if (size == 31)
         {
@@ -446,14 +473,15 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_15(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_15(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /*This function deal with size in 1~63*/
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_63(const double *input_array, const double *input_array1, double *result_array, int size,
-                 int *array_index)
+    vpow_vs_hook_avx2_63(const double *input_array, const double input_value, double *result_array, int size,
+                 int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                 void * post_args)
     {
         if (size == 63)
         {
@@ -633,14 +661,15 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_31(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_31(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_sub4(const double *input_array, const double *input_array1, double *result_array,
-                   unsigned int size)
+    vpow_vs_hook_avx2_sub4(const double *input_array, const double input_value, double *result_array,
+                   unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                   void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -654,7 +683,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
                 *array_index += 4;
             }
             if (rest)
-                vpow_avx2_3(input_array, input_array1, result_array, rest, array_index);
+                vpow_vs_hook_avx2_3(input_array, input_value, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -662,14 +691,15 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_3(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_3(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_sub64(const double *input_array, const double *input_array1, double *result_array,
-                    unsigned int size)
+    vpow_vs_hook_avx2_sub64(const double *input_array, const double input_value, double *result_array,
+                    unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                    void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -683,7 +713,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
                 *array_index += 64;
             }
             if (rest)
-                vpow_avx2_63(input_array, input_array1, result_array, rest, array_index);
+                vpow_vs_hook_avx2_63(input_array, input_value, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 64)
         {
@@ -691,20 +721,22 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_63(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_63(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_sub32(const double *input_array, const double *input_array1, double *result_array,
-                    unsigned int size)
+    vpow_vs_hook_avx2_sub32(const double *input_array, const double input_value, double *result_array,
+                    unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                    void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 32)
         {
-            vpow_avx2_sub64(input_array, input_array1, result_array, size);
+            vpow_vs_hook_avx2_sub64(input_array, input_value, result_array, size,
+            pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 32)
         {
@@ -712,21 +744,23 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_31(input_array, input_array1, result_array, size, 
-            array_index);
+            vpow_vs_hook_avx2_31(input_array, input_value, result_array, size, 
+            array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2_sub16(const double *input_array, const double *input_array1, double *result_array,
-                    unsigned int size)
+    vpow_vs_hook_avx2_sub16(const double *input_array, const double input_value, double *result_array,
+                    unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+                    void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 16)
         {
-            vpow_avx2_sub32(input_array, input_array1, result_array, size);
+            vpow_vs_hook_avx2_sub32(input_array, input_value, result_array, size, 
+            pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -734,20 +768,22 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_15(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_15(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vpow_avx2(const double *input_array, const double *input_array1, double *result_array,
-              unsigned int size)
+    vpow_vs_hook_avx2(const double *input_array, const double input_value, double *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+              void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 8)
         {
-            vpow_avx2_sub16(input_array, input_array1, result_array, size);
+            vpow_vs_hook_avx2_sub16(input_array, input_value, result_array, size, 
+            pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -755,18 +791,22 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx2_7(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx2_7(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vpow *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_AVX
-    vpow_avx_3(const double *input_array,
-               const double *input_array1,
+    vpow_vs_hook_avx_3(const double *input_array,
+               const double input_value,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, 
+               ckl_hook_func_t pre_hook, 
+               void * pre_args, 
+               ckl_hook_func_t post_hook, 
+               void * post_args)
     {
         if (size == 1)
         {
@@ -785,8 +825,9 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 
     /* kernel with vectorization up to AVX */
     static inline void __CKL_FN_ATTR_AVX
-    vpow_avx(const double *input_array, const double *input_array1, double *result_array,
-             unsigned int size)
+    vpow_vs_hook_avx(const double *input_array, const double input_value, double *result_array,
+             unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+             void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -800,7 +841,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
                 *array_index += 4;
             }
             if (rest)
-                vpow_avx_3(input_array, input_array1, result_array, rest, array_index);
+                vpow_vs_hook_avx_3(input_array, input_value, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -808,18 +849,21 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_avx_3(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_avx_3(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vpow *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_SSE2
-    vpow_sse_3(const double *input_array,
-               const double *input_array1,
+    vpow_vs_hook_sse_3(const double *input_array,
+               const double input_value,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, 
+               ckl_hook_func_t pre_hook, 
+               void * pre_args, 
+               ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -838,8 +882,9 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 
     /* kernel with vectorization up to SSE */
     static inline void __CKL_FN_ATTR_SSE2
-    vpow_sse(const double *input_array, const double *input_array1, double *result_array,
-             unsigned int size)
+    vpow_vs_hook_sse(const double *input_array, const double input_value, double *result_array,
+             unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, 
+             void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -853,7 +898,7 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
                 *array_index += 4;
             }
             if (rest)
-                vpow_sse_3(input_array, input_array1, result_array, rest, array_index);
+                vpow_vs_hook_sse_3(input_array, input_value, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -861,13 +906,14 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
         }
         else
         {
-            vpow_sse_3(input_array, input_array1, result_array, size, array_index);
+            vpow_vs_hook_sse_3(input_array, input_value, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vpow *****************/
-    static inline void vpow_scalar(const double *input_array, const double *input_array1, double *result_array,
-                                   unsigned int size)
+    static inline void vpow_vs_hook_scalar(const double *input_array, const double input_value, double *result_array,
+                                   unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, 
+                                   ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -880,9 +926,10 @@ void ckl_vpow(const double *input_array, const double *input_array1, double *res
 
 #undef OP1
 #undef OP2
+#undef ARRAY_SCALAR
 #undef VV
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*CKL_VPOW_H*/
+#endif /*CKL_VPOW_VS_HOOK_H*/

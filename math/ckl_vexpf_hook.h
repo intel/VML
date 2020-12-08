@@ -1,5 +1,5 @@
-#ifndef CKL_VEXPF_H
-#define CKL_VEXPF_H
+#ifndef CKL_VEXPF_HOOK_H
+#define CKL_VEXPF_HOOK_H
 
 #ifdef __cplusplus
 extern "C"
@@ -7,27 +7,35 @@ extern "C"
 #endif
 
 #include "ckl_common.h"
-    typedef void (*ckl_vexpf_func_t)(const float *, float *, unsigned int);
-    static inline void vexpf_avx512(const float *input_array, float *result_array,
-                                    unsigned int size);
-    static inline void vexpf_avx2(const float *input_array, float *result_array,
-                                  unsigned int size);
-    static inline void vexpf_avx(const float *input_array, float *result_array,
-                                 unsigned int size);
-    static inline void vexpf_sse(const float *input_array, float *result_array,
-                                 unsigned int size);
-    static inline void vexpf_scalar(const float *input_array, float *result_array,
-                                    unsigned int size);
+    typedef void (*ckl_vexpf_hook_func_t)(const float *, float *, unsigned int, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vexpf_hook_avx512(const float *input_array, float *result_array,
+                                    unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vexpf_hook_avx2(const float *input_array, float *result_array,
+                                  unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vexpf_hook_avx(const float *input_array, float *result_array,
+                                 unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vexpf_hook_sse(const float *input_array, float *result_array,
+                                 unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vexpf_hook_scalar(const float *input_array, float *result_array,
+                                    unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void ckl_vexpf(const float *input_array, float *result_array,
-                   unsigned int size) __attribute__((ifunc("vexpf_ifunc")));
+    void ckl_vexpf_hook(const float *input_array, float *result_array,
+                   unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vexpf_hook_ifunc")));
 #else
-void ckl_vexpf(const float *input_array, float *result_array,
-               unsigned int size);
+void ckl_vexpf_hook(const float *input_array, float *result_array,
+               unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #endif
 
 #include "ckl_ifunc.h"
-    RESOLVE_FUNC(ckl_vexpf_func_t, vexpf, ckl_vexpf)
+    RESOLVE_FUNC(ckl_vexpf_hook_func_t, vexpf_hook, ckl_vexpf_hook)
 
     __m128d _ZGVbN2v_exp(__m128d x);
     __m256d _ZGVcN4v_exp(__m256d x);
@@ -42,16 +50,16 @@ void ckl_vexpf(const float *input_array, float *result_array,
 #define NAME_AVX2_EXPF2D dN4v_exp
 #define NAME_AVX_EXPF2D cN4v_exp
 #define NAME_SSE_EXPF2D bN2v_exp
-#define OP1 
-#define OP2 
+#define OP1 PRE_HOOK_OP(pre_hook, pre_args) 
+#define OP2 POST_HOOK_OP(post_hook, post_args)
 
-    /************** ckl_vexpf *****************/
+    /************** ckl_vexpf_hook *****************/
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX512
-    vexpf_avx512_7(const float *input_array,
+    vexpf_hook_avx512_7(const float *input_array,
                    float *result_array,
                    int size,
-                   int *array_index)
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -92,8 +100,8 @@ void ckl_vexpf(const float *input_array, float *result_array,
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX512
-    vexpf_avx512_15(const float *input_array, float *result_array, int size,
-                    int *array_index)
+    vexpf_hook_avx512_15(const float *input_array, float *result_array, int size,
+                    int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -189,8 +197,9 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
     }
 
-    static inline void __CKL_FN_ATTR_AVX512 vexpf_avx512_16_group(const float *input_array, float *result_array,
-                                                                  unsigned int size)
+    static inline void __CKL_FN_ATTR_AVX512 vexpf_hook_avx512_16_group(const float *input_array, float *result_array,
+                                                                  unsigned int size, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -204,7 +213,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
                 *array_index += 16;
             }
             if (rest)
-                vexpf_avx512_15(input_array, result_array, rest, array_index);
+                vexpf_hook_avx512_15(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -212,19 +221,20 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
         else
         {
-            vexpf_avx512_15(input_array, result_array, size, array_index);
+            vexpf_hook_avx512_15(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __CKL_FN_ATTR_AVX512 vexpf_avx512(const float *input_array, float *result_array,
-                                                         unsigned int size)
+    static inline void __CKL_FN_ATTR_AVX512 vexpf_hook_avx512(const float *input_array, float *result_array,
+                                                         unsigned int size, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 8)
         {
-            vexpf_avx512_16_group(input_array, result_array, size);
+            vexpf_hook_avx512_16_group(input_array, result_array, size, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -232,15 +242,15 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
         else
         {
-            vexpf_avx512_7(input_array, result_array, size, array_index);
+            vexpf_hook_avx512_7(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vexpf *****************/
+    /************** ckl_vexpf_hook *****************/
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX2
-    vexpf_avx2_3(const float *input_array, float *result_array, int size,
-                 int *array_index)
+    vexpf_hook_avx2_3(const float *input_array, float *result_array, int size,
+                 int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -259,8 +269,8 @@ void ckl_vexpf(const float *input_array, float *result_array,
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vexpf_avx2(const float *input_array, float *result_array,
-               unsigned int size)
+    vexpf_hook_avx2(const float *input_array, float *result_array,
+               unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -274,7 +284,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
                 *array_index += 4;
             }
             if (rest)
-                vexpf_avx2_3(input_array, result_array, rest, array_index);
+                vexpf_hook_avx2_3(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -282,17 +292,17 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
         else
         {
-            vexpf_avx2_3(input_array, result_array, size, array_index);
+            vexpf_hook_avx2_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vexpf *****************/
+    /************** ckl_vexpf_hook *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_AVX
-    vexpf_avx_3(const float *input_array,
+    vexpf_hook_avx_3(const float *input_array,
                 float *result_array,
                 int size,
-                int *array_index)
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -311,8 +321,8 @@ void ckl_vexpf(const float *input_array, float *result_array,
 
     /* kernel with vectorization up to AVX */
     static inline void __CKL_FN_ATTR_AVX
-    vexpf_avx(const float *input_array, float *result_array,
-              unsigned int size)
+    vexpf_hook_avx(const float *input_array, float *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -326,7 +336,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
                 *array_index += 4;
             }
             if (rest)
-                vexpf_avx_3(input_array, result_array, rest, array_index);
+                vexpf_hook_avx_3(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -334,17 +344,17 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
         else
         {
-            vexpf_avx_3(input_array, result_array, size, array_index);
+            vexpf_hook_avx_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vexpf *****************/
+    /************** ckl_vexpf_hook *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_SSE2
-    vexpf_sse_3(const float *input_array,
+    vexpf_hook_sse_3(const float *input_array,
                 float *result_array,
                 int size,
-                int *array_index)
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 1)
         {
@@ -363,8 +373,8 @@ void ckl_vexpf(const float *input_array, float *result_array,
 
     /* kernel with vectorization up to SSE */
     static inline void __CKL_FN_ATTR_SSE2
-    vexpf_sse(const float *input_array, float *result_array,
-              unsigned int size)
+    vexpf_hook_sse(const float *input_array, float *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -378,7 +388,7 @@ void ckl_vexpf(const float *input_array, float *result_array,
                 *array_index += 4;
             }
             if (rest)
-                vexpf_sse_3(input_array, result_array, rest, array_index);
+                vexpf_hook_sse_3(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -386,13 +396,14 @@ void ckl_vexpf(const float *input_array, float *result_array,
         }
         else
         {
-            vexpf_sse_3(input_array, result_array, size, array_index);
+            vexpf_hook_sse_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vexpf *****************/
-    static inline void vexpf_scalar(const float *input_array, float *result_array,
-                                    unsigned int size)
+    /************** ckl_vexpf_hook *****************/
+    static inline void vexpf_hook_scalar(const float *input_array, float *result_array,
+                                    unsigned int size, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -409,4 +420,4 @@ void ckl_vexpf(const float *input_array, float *result_array,
 }
 #endif
 
-#endif /*CKL_VEXPF_H*/
+#endif /*CKL_VEXPF_HOOK_H*/

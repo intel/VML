@@ -1,6 +1,6 @@
 HEADER_PATH = ../
 bin = use_sin
-CFLAGS = -m64 -g -O2 -fPIC -Wall -ffast-math -ftree-loop-vectorize -I$(HEADER_PATH)
+CFLAGS = -m64 -O2 -fPIC -Wall -ffast-math -ftree-loop-vectorize -I$(HEADER_PATH)
 LDFLAGS = -lm
 CC = gcc
 

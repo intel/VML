@@ -3,6 +3,7 @@ If your compiler doesn't support ifunc, you can uncomment the following define m
 */
 // #define GCC_IFUN_UNAVAILABLE 1
 
+#define WITH_HOOK 1
 #include "ckl_math.h"
 #include "sys/time.h"
 #include "time.h"
@@ -30,7 +31,7 @@ struct hook_args
 
 void * hook_function(void * input)
 {
-    printf("=== I'm a hooker\n");
+    printf("=== I'm a hook function\n");
     struct hook_args * args = input;
     args->output_values[0] = sin(args->input_arg[0]);
     args->output_values[1] = tan(args->input_arg[1]);
@@ -55,8 +56,6 @@ int main(int argc, char *argv[])
     hook_test.output_values[0] = 0.0;
     hook_test.output_values[1] = 0.0;
 
-    ckl_set_pre_hook(hook_function, &hook_test);
-
     unsigned int array_size = dim * loopCount;
     FLOAT *input_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
     FLOAT *result_array = (FLOAT *)malloc(sizeof(FLOAT) * array_size);
@@ -70,7 +69,12 @@ int main(int argc, char *argv[])
     gettimeofday(&start, NULL);
     for (unsigned int i = 0; i < loopCount; i++)
     {
+    #if defined(WITH_HOOK)
+        //Use vsin with hooks
+        ckl_vsin_hook(input_array + i * dim, result_array + i * dim, dim, hook_function, &hook_test, NULL, NULL);
+    #else
         ckl_vsin(input_array + i * dim, result_array + i * dim, dim);
+    #endif
     }
     gettimeofday(&finish, NULL);
     printf("hook_function's results: output_values[0]=%f, output_values[1]=%f\n", 

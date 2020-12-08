@@ -1,5 +1,5 @@
-#ifndef CKL_VSINCOSF_H
-#define CKL_VSINCOSF_H
+#ifndef CKL_VSINCOSF_HOOK_H
+#define CKL_VSINCOSF_HOOK_H
 
 #ifdef __cplusplus
 extern "C"
@@ -7,27 +7,35 @@ extern "C"
 #endif
 
 #include "ckl_common.h"
-    typedef void (*ckl_vsincosf_func_t)(const float *, float *, float *, unsigned int);
-    static inline void vsincosf_avx512(const float *input_array, float *result_array,
-                                       float *result_array1, unsigned int size);
-    static inline void vsincosf_avx2(const float *input_array, float *result_array,
-                                     float *result_array1, unsigned int size);
-    static inline void vsincosf_avx(const float *input_array, float *result_array,
-                                    float *result_array1, unsigned int size);
-    static inline void vsincosf_sse(const float *input_array, float *result_array,
-                                    float *result_array1, unsigned int size);
-    static inline void vsincosf_scalar(const float *input_array, float *result_array,
-                                       float *result_array1, unsigned int size);
+    typedef void (*ckl_vsincosf_hook_func_t)(const float *, float *, float *, unsigned int, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsincosf_hook_avx512(const float *input_array, float *result_array,
+                                       float *result_array1, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsincosf_hook_avx2(const float *input_array, float *result_array,
+                                     float *result_array1, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsincosf_hook_avx(const float *input_array, float *result_array,
+                                    float *result_array1, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsincosf_hook_sse(const float *input_array, float *result_array,
+                                    float *result_array1, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsincosf_hook_scalar(const float *input_array, float *result_array,
+                                       float *result_array1, unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void ckl_vsincosf(const float *input_array, float *result_array, float *result_array1,
-                      unsigned int size) __attribute__((ifunc("vsincosf_ifunc")));
+    void ckl_vsincosf_hook(const float *input_array, float *result_array, float *result_array1,
+                      unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vsincosf_hook_ifunc")));
 #else
-void ckl_vsincosf(const float *input_array, float *result_array, float *result_array1,
-                  unsigned int size);
+void ckl_vsincosf_hook(const float *input_array, float *result_array, float *result_array1,
+                  unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #endif
 
 #include "ckl_ifunc.h"
-    RESOLVE_FUNC(ckl_vsincosf_func_t, vsincosf, ckl_vsincosf)
+    RESOLVE_FUNC(ckl_vsincosf_hook_func_t, vsincosf_hook, ckl_vsincosf_hook)
 
     __m128 _ZGVbN4v_sinf(__m128 x);
     __m256 _ZGVcN8v_sinf(__m256 x);
@@ -43,14 +51,15 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 #define SINCOS 1
 #include "commonf/ops.h"
 #include "commonf2d/ops.h"
-#define OP1 
-#define OP2 
+#define OP1 PRE_HOOK_OP(pre_hook, pre_args) 
+#define OP2 POST_HOOK_OP(post_hook, post_args)
 
-    /************** ckl_vsincosf *****************/
+    /************** ckl_vsincosf_hook *****************/
     /*This function deals with size in 1~31 */
     static inline void __CKL_FN_ATTR_AVX512
-    vsincosf_avx512_31(const float *input_array, float *result_array, float *result_array1, int size,
-                       int *array_index)
+    vsincosf_hook_avx512_31(const float *input_array, float *result_array, float *result_array1, int size,
+                       int *array_index, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size <= 31 && size >= 25)
         {
@@ -93,8 +102,8 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 
     /* kernel with vectorization up to AVX512 */
     static inline void __CKL_FN_ATTR_AVX512
-    vsincosf_avx512(const float *input_array, float *result_array, float *result_array1,
-                    unsigned int size)
+    vsincosf_hook_avx512(const float *input_array, float *result_array, float *result_array1,
+                    unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -108,19 +117,19 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
                 *array_index += 32;
             }
             if (rest)
-                vsincosf_avx512_31(input_array, result_array, result_array1, rest, array_index);
+                vsincosf_hook_avx512_31(input_array, result_array, result_array1, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else
         {
-            vsincosf_avx512_31(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_avx512_31(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vsincosf *****************/
+    /************** ckl_vsincosf_hook *****************/
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX2
-    vsincosf_AVX_15(const float *input_array, float *result_array, float *result_array1, int size,
-                    int *array_index)
+    vsincosf_hook_AVX_15(const float *input_array, float *result_array, float *result_array1, int size,
+                    int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size <= 15 && size >= 9)
         {
@@ -146,8 +155,8 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vsincosf_avx2(const float *input_array, float *result_array, float *result_array1,
-                  unsigned int size)
+    vsincosf_hook_avx2(const float *input_array, float *result_array, float *result_array1,
+                  unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -161,7 +170,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
                 *array_index += 16;
             }
             if (rest)
-                vsincosf_AVX_15(input_array, result_array, result_array1, rest, array_index);
+                vsincosf_hook_AVX_15(input_array, result_array, result_array1, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -169,16 +178,16 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_AVX_15(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_AVX_15(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vsincosf *****************/
+    /************** ckl_vsincosf_hook *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_AVX
-    vsincosf_avx_3(const float *input_array,
+    vsincosf_hook_avx_3(const float *input_array,
                    float *result_array, float *result_array1, int size,
-                   int *array_index)
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 3)
         {
@@ -196,11 +205,11 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX
-    vsincosf_avx_7(const float *input_array,
+    vsincosf_hook_avx_7(const float *input_array,
                    float *result_array,
                    float *result_array1,
                    int size,
-                   int *array_index)
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 7)
         {
@@ -230,14 +239,14 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_avx_3(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_avx_3(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX
-    vsincosf_avx_15(const float *input_array, float *result_array, float *result_array1, int size,
-                    int *array_index)
+    vsincosf_hook_avx_15(const float *input_array, float *result_array, float *result_array1, int size,
+                    int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size <= 15 && size >= 9)
         {
@@ -263,8 +272,8 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 
     /* kernel with vectorization up to AVX */
     static inline void __CKL_FN_ATTR_AVX
-    vsincosf_avx1(const float *input_array, float *result_array, float *result_array1,
-                  unsigned int size)
+    vsincosf_hook_avx1(const float *input_array, float *result_array, float *result_array1,
+                  unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -278,7 +287,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
                 *array_index += 16;
             }
             if (rest)
-                vsincosf_avx_15(input_array, result_array, result_array1, rest, array_index);
+                vsincosf_hook_avx_15(input_array, result_array, result_array1, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -286,14 +295,14 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_avx_15(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_avx_15(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX */
     static inline void __CKL_FN_ATTR_AVX
-    vsincosf_avx(const float *input_array, float *result_array, float *result_array1,
-                 unsigned int size)
+    vsincosf_hook_avx(const float *input_array, float *result_array, float *result_array1,
+                 unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -308,7 +317,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
                 *array_index += 8;
             }
             if (rest)
-                vsincosf_avx_7(input_array, result_array, result_array1, rest, array_index);
+                vsincosf_hook_avx_7(input_array, result_array, result_array1, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -317,16 +326,16 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_avx_7(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_avx_7(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vsincosf *****************/
+    /************** ckl_vsincosf_hook *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_SSE2
-    vsincosf_sse_3(const float *input_array,
+    vsincosf_hook_sse_3(const float *input_array,
                    float *result_array, float *result_array1, int size,
-                   int *array_index)
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 3)
         {
@@ -344,11 +353,11 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_SSE2
-    vsincosf_sse_7(const float *input_array,
+    vsincosf_hook_sse_7(const float *input_array,
                    float *result_array,
                    float *result_array1,
                    int size,
-                   int *array_index)
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 7)
         {
@@ -378,14 +387,14 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_sse_3(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_sse_3(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to SSE */
     static inline void __CKL_FN_ATTR_SSE2
-    vsincosf_sse(const float *input_array, float *result_array, float *result_array1,
-                 unsigned int size)
+    vsincosf_hook_sse(const float *input_array, float *result_array, float *result_array1,
+                 unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -400,7 +409,7 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
                 *array_index += 8;
             }
             if (rest)
-                vsincosf_sse_7(input_array, result_array, result_array1, rest, array_index);
+                vsincosf_hook_sse_7(input_array, result_array, result_array1, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -409,13 +418,14 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
         }
         else
         {
-            vsincosf_sse_7(input_array, result_array, result_array1, size, array_index);
+            vsincosf_hook_sse_7(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
-    /************** ckl_vsincosf *****************/
-    static inline void vsincosf_scalar(const float *input_array, float *result_array, float *result_array1,
-                                       unsigned int size)
+    /************** ckl_vsincosf_hook *****************/
+    static inline void vsincosf_hook_scalar(const float *input_array, float *result_array, float *result_array1,
+                                       unsigned int size, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -433,4 +443,4 @@ void ckl_vsincosf(const float *input_array, float *result_array, float *result_a
 }
 #endif
 
-#endif /*CKL_VSINCOSF_H*/
+#endif /*CKL_VSINCOSF_HOOK_H*/

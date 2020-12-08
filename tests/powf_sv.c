@@ -1,11 +1,11 @@
 #include "test_common.h"
-#define FLOAT double
-#define DOUBLE
+#define FLOAT float
 #define POW
-typedef void (*test_func_vector)(const FLOAT *, const FLOAT *, FLOAT *, unsigned int);
+#define TEST_SCALAR_ARRAY 1
+typedef void (*test_func_vector)(const FLOAT, const FLOAT *, FLOAT *, unsigned int);
 typedef FLOAT (*test_func_scalar)(FLOAT, FLOAT);
-test_func_vector fp_vector = ckl_vpow;
-test_func_scalar fp_scalar = pow;
+test_func_vector fp_vector = ckl_vpowf_sv;
+test_func_scalar fp_scalar = powf;
 /**
 Test values define:
 The input array is SPECIAL_VALUES + 10 vaules from RANGES + dim values from

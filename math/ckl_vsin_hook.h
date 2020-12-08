@@ -1,5 +1,5 @@
-#ifndef CKL_VSIN_H
-#define CKL_VSIN_H
+#ifndef CKL_VSIN_HOOK_H
+#define CKL_VSIN_HOOK_H
 
 #ifdef __cplusplus
 extern "C"
@@ -7,27 +7,35 @@ extern "C"
 #endif
 
 #include "ckl_common.h"
-    typedef void (*ckl_vsin_func_t)(const double *, double *, unsigned int);
-    static inline void vsin_avx512(const double *input_array, double *result_array,
-                                   unsigned int size);
-    static inline void vsin_avx2(const double *input_array, double *result_array,
-                                 unsigned int size);
-    static inline void vsin_avx(const double *input_array, double *result_array,
-                                unsigned int size);
-    static inline void vsin_sse(const double *input_array, double *result_array,
-                                unsigned int size);
-    static inline void vsin_scalar(const double *input_array, double *result_array,
-                                   unsigned int size);
+    typedef void (*ckl_vsin_hook_func_t)(const double *, double *, unsigned int, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsin_hook_avx512(const double *input_array, double *result_array,
+                                   unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsin_hook_avx2(const double *input_array, double *result_array,
+                                 unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsin_hook_avx(const double *input_array, double *result_array,
+                                unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsin_hook_sse(const double *input_array, double *result_array,
+                                unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
+    static inline void vsin_hook_scalar(const double *input_array, double *result_array,
+                                   unsigned int size, ckl_hook_func_t pre_hook, 
+                                   void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void ckl_vsin(const double *input_array, double *result_array,
-                  unsigned int size) __attribute__((ifunc("vsin_ifunc")));
+    void ckl_vsin_hook(const double *input_array, double *result_array,
+                  unsigned int size, ckl_hook_func_t pre_hook, 
+                  void * pre_args, ckl_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vsin_hook_ifunc")));
 #else
-void ckl_vsin(const double *input_array, double *result_array,
-              unsigned int size);
+void ckl_vsin_hook(const double *input_array, double *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, 
+                 void * pre_args, ckl_hook_func_t post_hook, void * post_args);
 #endif
 
 #include "ckl_ifunc.h"
-    RESOLVE_FUNC(ckl_vsin_func_t, vsin, ckl_vsin)
+    RESOLVE_FUNC(ckl_vsin_hook_func_t, vsin_hook, ckl_vsin_hook)
 
     __m128d _ZGVbN2v_sin(__m128d x);
     __m256d _ZGVcN4v_sin(__m256d x);
@@ -42,14 +50,14 @@ void ckl_vsin(const double *input_array, double *result_array,
 #define NAME_SSE_SIN bN2v_sin
 #define NAME_SCALAR_SIN sin
 #define ckl_sin sin
-#define OP1 
-#define OP2 
+#define OP1 PRE_HOOK_OP(pre_hook, pre_args) 
+#define OP2 POST_HOOK_OP(post_hook, post_args)
 
     /************** ckl_vsin *****************/
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX512
-    vsin_avx512_15(const double *input_array, double *result_array, int size,
-                   int *array_index)
+    vsin_hook_avx512_15(const double *input_array, double *result_array, int size,
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 13 || size == 14 || size == 15)
         {
@@ -84,8 +92,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /*This function deals with size in 1~31 */
     static inline void __CKL_FN_ATTR_AVX512
-    vsin_avx512_31(const double *input_array, double *result_array, int size,
-                   int *array_index)
+    vsin_hook_avx512_31(const double *input_array, double *result_array, int size,
+                   int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 31 || size == 30 || size == 29)
         {
@@ -122,12 +130,12 @@ void ckl_vsin(const double *input_array, double *result_array,
             AVX512_8__2_ops(OP1, OP2, NAME_AVX512_SIN)
         }
         else
-            vsin_avx512_15(input_array, result_array, size, array_index);
+            vsin_hook_avx512_15(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
     }
 
     static inline void __CKL_FN_ATTR_AVX512
-    vsin_avx512_sub(const double *input_array, double *result_array,
-                    unsigned int size)
+    vsin_hook_avx512_sub(const double *input_array, double *result_array,
+                    unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -141,7 +149,7 @@ void ckl_vsin(const double *input_array, double *result_array,
                 *array_index += 16;
             }
             if (rest)
-                vsin_avx512_31(input_array, result_array, rest, array_index);
+                vsin_hook_avx512_31(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 32)
         {
@@ -149,20 +157,20 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_avx512_31(input_array, result_array, size, array_index);
+            vsin_hook_avx512_31(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX512 */
     static inline void __CKL_FN_ATTR_AVX512
-    vsin_avx512(const double *input_array, double *result_array,
-                unsigned int size)
+    vsin_hook_avx512(const double *input_array, double *result_array,
+                unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
         if (size > 16)
         {
-            vsin_avx512_sub(input_array, result_array, size);
+            vsin_hook_avx512_sub(input_array, result_array, size, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 16)
         {
@@ -170,15 +178,15 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_avx512_15(input_array, result_array, size, array_index);
+            vsin_hook_avx512_15(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vsin *****************/
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX2
-    vsin_avx2_7(const double *input_array, double *result_array, int size,
-                int *array_index)
+    vsin_hook_avx2_7(const double *input_array, double *result_array, int size,
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 7 || size == 6 || size == 5)
         {
@@ -196,8 +204,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX2
-    vsin_avx2_15(const double *input_array, double *result_array, int size,
-                 int *array_index)
+    vsin_hook_avx2_15(const double *input_array, double *result_array, int size,
+                 int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 13 || size == 14 || size == 15)
         {
@@ -231,8 +239,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /* kernel with vectorization up to AVX2 */
     static inline void __CKL_FN_ATTR_AVX2
-    vsin_avx2(const double *input_array, double *result_array,
-              unsigned int size)
+    vsin_hook_avx2(const double *input_array, double *result_array,
+              unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -246,7 +254,7 @@ void ckl_vsin(const double *input_array, double *result_array,
                 *array_index += 8;
             }
             if (rest)
-                vsin_avx2_7(input_array, result_array, rest, array_index);
+                vsin_hook_avx2_7(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 8)
         {
@@ -254,17 +262,17 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_avx2_7(input_array, result_array, size, array_index);
+            vsin_hook_avx2_7(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vsin *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_AVX
-    vsin_avx_3(const double *input_array,
+    vsin_hook_avx_3(const double *input_array,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 3)
         {
@@ -282,10 +290,10 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_AVX
-    vsin_avx_7(const double *input_array,
+    vsin_hook_avx_7(const double *input_array,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 7 || size == 6)
         {
@@ -317,8 +325,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_AVX
-    vsin_avx_15(const double *input_array, double *result_array, int size,
-                int *array_index)
+    vsin_hook_avx_15(const double *input_array, double *result_array, int size,
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 13 || size == 14 || size == 15)
         {
@@ -338,14 +346,14 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_avx_7(input_array, result_array, size, array_index);
+            vsin_hook_avx_7(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /* kernel with vectorization up to AVX */
     static inline void __CKL_FN_ATTR_AVX
-    vsin_avx(const double *input_array, double *result_array,
-             unsigned int size)
+    vsin_hook_avx(const double *input_array, double *result_array,
+             unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -359,7 +367,7 @@ void ckl_vsin(const double *input_array, double *result_array,
                 *array_index += 4;
             }
             if (rest)
-                vsin_avx_3(input_array, result_array, rest, array_index);
+                vsin_hook_avx_3(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -367,17 +375,17 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_avx_3(input_array, result_array, size, array_index);
+            vsin_hook_avx_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vsin *****************/
     /*This function deal with size in 1~3*/
     static inline void __CKL_FN_ATTR_SSE2
-    vsin_sse_3(const double *input_array,
+    vsin_hook_sse_3(const double *input_array,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 3)
         {
@@ -395,10 +403,10 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /*This function deal with size in 1~7*/
     static inline void __CKL_FN_ATTR_SSE2
-    vsin_sse_7(const double *input_array,
+    vsin_hook_sse_7(const double *input_array,
                double *result_array,
                int size,
-               int *array_index)
+               int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 7)
         {
@@ -418,14 +426,14 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_sse_3(input_array, result_array, size, array_index);
+            vsin_hook_sse_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /*This function deal with size in 1~15*/
     static inline void __CKL_FN_ATTR_SSE2
-    vsin_sse_15(const double *input_array, double *result_array, int size,
-                int *array_index)
+    vsin_hook_sse_15(const double *input_array, double *result_array, int size,
+                int *array_index, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         if (size == 15)
         {
@@ -491,8 +499,8 @@ void ckl_vsin(const double *input_array, double *result_array,
 
     /* kernel with vectorization up to SSE */
     static inline void __CKL_FN_ATTR_SSE2
-    vsin_sse(const double *input_array, double *result_array,
-             unsigned int size)
+    vsin_hook_sse(const double *input_array, double *result_array,
+             unsigned int size, ckl_hook_func_t pre_hook, void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -506,7 +514,7 @@ void ckl_vsin(const double *input_array, double *result_array,
                 *array_index += 4;
             }
             if (rest)
-                vsin_sse_3(input_array, result_array, rest, array_index);
+                vsin_hook_sse_3(input_array, result_array, rest, array_index, pre_hook, pre_args, post_hook, post_args);
         }
         else if (size == 4)
         {
@@ -514,13 +522,14 @@ void ckl_vsin(const double *input_array, double *result_array,
         }
         else
         {
-            vsin_sse_3(input_array, result_array, size, array_index);
+            vsin_hook_sse_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
     }
 
     /************** ckl_vsin *****************/
-    static inline void vsin_scalar(const double *input_array, double *result_array,
-                                   unsigned int size)
+    static inline void vsin_hook_scalar(const double *input_array, double *result_array,
+                                   unsigned int size, ckl_hook_func_t pre_hook, 
+				   void * pre_args, ckl_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
@@ -537,4 +546,4 @@ void ckl_vsin(const double *input_array, double *result_array,
 }
 #endif
 
-#endif /*CKL_VSIN_H*/
+#endif /*CKL_VSIN_HOOK_H*/

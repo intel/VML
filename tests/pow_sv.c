@@ -2,9 +2,10 @@
 #define FLOAT double
 #define DOUBLE
 #define POW
-typedef void (*test_func_vector)(const FLOAT *, const FLOAT *, FLOAT *, unsigned int);
+#define TEST_SCALAR_ARRAY 1
+typedef void (*test_func_vector)(const FLOAT, const FLOAT *, FLOAT *, unsigned int);
 typedef FLOAT (*test_func_scalar)(FLOAT, FLOAT);
-test_func_vector fp_vector = ckl_vpow;
+test_func_vector fp_vector = ckl_vpow_sv;
 test_func_scalar fp_scalar = pow;
 /**
 Test values define:
