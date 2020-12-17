@@ -1,1 +1,1 @@
-Compute Kernel Library (CKL) is a performance-driven library providing common computation routines abstracted from various levels. 
+Vectorized Math Library (VML) is a performance-driven library which provides various of vectorization math functions on SSE/AVX/AVX2/AVX512 supported platforms.
