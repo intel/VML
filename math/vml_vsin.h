@@ -37,22 +37,22 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vsin_func_t)(const double *, double *, unsigned int);
-    static inline void vsin_avx512(const double *input_array, double *result_array,
+    typedef int (*vml_vsin_func_t)(const double *, double *, unsigned int);
+    static inline int vsin_avx512(const double *input_array, double *result_array,
                                    unsigned int size);
-    static inline void vsin_avx2(const double *input_array, double *result_array,
+    static inline int vsin_avx2(const double *input_array, double *result_array,
                                  unsigned int size);
-    static inline void vsin_avx(const double *input_array, double *result_array,
+    static inline int vsin_avx(const double *input_array, double *result_array,
                                 unsigned int size);
-    static inline void vsin_sse(const double *input_array, double *result_array,
+    static inline int vsin_sse(const double *input_array, double *result_array,
                                 unsigned int size);
-    static inline void vsin_scalar(const double *input_array, double *result_array,
+    static inline int vsin_scalar(const double *input_array, double *result_array,
                                    unsigned int size);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vsin(const double *input_array, double *result_array,
+    int vml_vsin(const double *input_array, double *result_array,
                   unsigned int size) __attribute__((ifunc("vsin_ifunc")));
 #else
-void vml_vsin(const double *input_array, double *result_array,
+    int vml_vsin(const double *input_array, double *result_array,
               unsigned int size);
 #endif
 
@@ -184,12 +184,14 @@ void vml_vsin(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512
+    static inline int __VML_FN_ATTR_AVX512
     vsin_avx512(const double *input_array, double *result_array,
                 unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 16)
         {
             vsin_avx512_sub(input_array, result_array, size);
@@ -202,6 +204,7 @@ void vml_vsin(const double *input_array, double *result_array,
         {
             vsin_avx512_15(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsin *****************/
@@ -260,12 +263,14 @@ void vml_vsin(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vsin_avx2(const double *input_array, double *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -286,6 +291,7 @@ void vml_vsin(const double *input_array, double *result_array,
         {
             vsin_avx2_7(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsin *****************/
@@ -373,12 +379,14 @@ void vml_vsin(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vsin_avx(const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -399,6 +407,7 @@ void vml_vsin(const double *input_array, double *result_array,
         {
             vsin_avx_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsin *****************/
@@ -520,12 +529,14 @@ void vml_vsin(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vsin_sse(const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -546,19 +557,23 @@ void vml_vsin(const double *input_array, double *result_array,
         {
             vsin_sse_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsin *****************/
-    static inline void vsin_scalar(const double *input_array, double *result_array,
+    static inline int vsin_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_1_ops(OP1, OP2, 0, NAME_SCALAR_SIN);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

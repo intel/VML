@@ -37,22 +37,22 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vexpf_func_t)(const float *, float *, unsigned int);
-    static inline void vexpf_avx512(const float *input_array, float *result_array,
+    typedef int (*vml_vexpf_func_t)(const float *, float *, unsigned int);
+    static inline int vexpf_avx512(const float *input_array, float *result_array,
                                     unsigned int size);
-    static inline void vexpf_avx2(const float *input_array, float *result_array,
+    static inline int vexpf_avx2(const float *input_array, float *result_array,
                                   unsigned int size);
-    static inline void vexpf_avx(const float *input_array, float *result_array,
+    static inline int vexpf_avx(const float *input_array, float *result_array,
                                  unsigned int size);
-    static inline void vexpf_sse(const float *input_array, float *result_array,
+    static inline int vexpf_sse(const float *input_array, float *result_array,
                                  unsigned int size);
-    static inline void vexpf_scalar(const float *input_array, float *result_array,
+    static inline int vexpf_scalar(const float *input_array, float *result_array,
                                     unsigned int size);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vexpf(const float *input_array, float *result_array,
+    int vml_vexpf(const float *input_array, float *result_array,
                    unsigned int size) __attribute__((ifunc("vexpf_ifunc")));
 #else
-void vml_vexpf(const float *input_array, float *result_array,
+    int vml_vexpf(const float *input_array, float *result_array,
                unsigned int size);
 #endif
 
@@ -247,11 +247,13 @@ void vml_vexpf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512 vexpf_avx512(const float *input_array, float *result_array,
+    static inline int __VML_FN_ATTR_AVX512 vexpf_avx512(const float *input_array, float *result_array,
                                                          unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vexpf_avx512_16_group(input_array, result_array, size);
@@ -264,6 +266,7 @@ void vml_vexpf(const float *input_array, float *result_array,
         {
             vexpf_avx512_7(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexpf *****************/
@@ -288,12 +291,14 @@ void vml_vexpf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vexpf_avx2(const float *input_array, float *result_array,
                unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -314,6 +319,7 @@ void vml_vexpf(const float *input_array, float *result_array,
         {
             vexpf_avx2_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexpf *****************/
@@ -340,12 +346,14 @@ void vml_vexpf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vexpf_avx(const float *input_array, float *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -366,6 +374,7 @@ void vml_vexpf(const float *input_array, float *result_array,
         {
             vexpf_avx_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexpf *****************/
@@ -392,12 +401,14 @@ void vml_vexpf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vexpf_sse(const float *input_array, float *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -418,19 +429,23 @@ void vml_vexpf(const float *input_array, float *result_array,
         {
             vexpf_sse_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexpf *****************/
-    static inline void vexpf_scalar(const float *input_array, float *result_array,
+    static inline int vexpf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_f2d_1_ops(OP1, OP2, 0, NAME_SCALAR_EXPF);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

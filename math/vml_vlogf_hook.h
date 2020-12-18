@@ -37,29 +37,29 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vlogf_hook_func_t)(const float *, float *, unsigned int, vml_hook_func_t pre_hook, 
+    typedef int (*vml_vlogf_hook_func_t)(const float *, float *, unsigned int, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vlogf_hook_avx512(const float *input_array, float *result_array,
+    static inline int vlogf_hook_avx512(const float *input_array, float *result_array,
                                     unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vlogf_hook_avx2(const float *input_array, float *result_array,
+    static inline int vlogf_hook_avx2(const float *input_array, float *result_array,
                                   unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vlogf_hook_avx(const float *input_array, float *result_array,
+    static inline int vlogf_hook_avx(const float *input_array, float *result_array,
                                  unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vlogf_hook_sse(const float *input_array, float *result_array,
+    static inline int vlogf_hook_sse(const float *input_array, float *result_array,
                                  unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vlogf_hook_scalar(const float *input_array, float *result_array,
+    static inline int vlogf_hook_scalar(const float *input_array, float *result_array,
                                     unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vlogf_hook(const float *input_array, float *result_array,
+    int vml_vlogf_hook(const float *input_array, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vlogf_hook_ifunc")));
 #else
-void vml_vlogf_hook(const float *input_array, float *result_array,
+    int vml_vlogf_hook(const float *input_array, float *result_array,
                unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #endif
@@ -257,12 +257,14 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512
+    static inline int __VML_FN_ATTR_AVX512
     vlogf_hook_avx512(const float *input_array, float *result_array,
                  unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 31)
         {
             unsigned int count = size >> 5;
@@ -279,6 +281,7 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
         {
             vlogf_hook_avx512_31(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vlogf_hook *****************/
@@ -402,12 +405,14 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vlogf_hook_avx2(const float *input_array, float *result_array,
                unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -428,6 +433,7 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
         {
             vlogf_hook_avx2_7(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vlogf_hook *****************/
@@ -555,12 +561,14 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vlogf_hook_avx(const float *input_array, float *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -581,6 +589,7 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
         {
             vlogf_hook_avx_3(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vlogf_hook *****************/
@@ -644,12 +653,14 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vlogf_hook_sse(const float *input_array, float *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -670,20 +681,24 @@ void vml_vlogf_hook(const float *input_array, float *result_array,
         {
             vlogf_hook_sse_7(input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vlogf_hook *****************/
-    static inline void vlogf_hook_scalar(const float *input_array, float *result_array,
+    static inline int vlogf_hook_scalar(const float *input_array, float *result_array,
                                     unsigned int size, vml_hook_func_t pre_hook, 
 				   void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALARF_1_ops(OP1, OP2, 0, NAME_SCALAR_LOGF);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

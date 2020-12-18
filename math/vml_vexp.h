@@ -37,22 +37,22 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vexp_func_t)(const double *, double *, unsigned int);
-    static inline void vexp_avx512(const double *input_array, double *result_array,
+    typedef int (*vml_vexp_func_t)(const double *, double *, unsigned int);
+    static inline int vexp_avx512(const double *input_array, double *result_array,
                                    unsigned int size);
-    static inline void vexp_avx2(const double *input_array, double *result_array,
+    static inline int vexp_avx2(const double *input_array, double *result_array,
                                  unsigned int size);
-    static inline void vexp_avx(const double *input_array, double *result_array,
+    static inline int vexp_avx(const double *input_array, double *result_array,
                                 unsigned int size);
-    static inline void vexp_sse(const double *input_array, double *result_array,
+    static inline int vexp_sse(const double *input_array, double *result_array,
                                 unsigned int size);
-    static inline void vexp_scalar(const double *input_array, double *result_array,
+    static inline int vexp_scalar(const double *input_array, double *result_array,
                                    unsigned int size);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vexp(const double *input_array, double *result_array,
+    int vml_vexp(const double *input_array, double *result_array,
                   unsigned int size) __attribute__((ifunc("vexp_ifunc")));
 #else
-void vml_vexp(const double *input_array, double *result_array,
+    int vml_vexp(const double *input_array, double *result_array,
               unsigned int size);
 #endif
 
@@ -249,11 +249,13 @@ void vml_vexp(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512 vexp_avx512(const double *input_array, double *result_array,
+    static inline int __VML_FN_ATTR_AVX512 vexp_avx512(const double *input_array, double *result_array,
                                                         unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vexp_avx512_16_group(input_array, result_array, size);
@@ -266,6 +268,7 @@ void vml_vexp(const double *input_array, double *result_array,
         {
             vexp_avx512_7(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexp *****************/
@@ -290,12 +293,14 @@ void vml_vexp(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vexp_avx2(const double *input_array, double *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -316,6 +321,7 @@ void vml_vexp(const double *input_array, double *result_array,
         {
             vexp_avx2_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexp *****************/
@@ -342,12 +348,14 @@ void vml_vexp(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vexp_avx(const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -368,6 +376,7 @@ void vml_vexp(const double *input_array, double *result_array,
         {
             vexp_avx_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexp *****************/
@@ -394,12 +403,14 @@ void vml_vexp(const double *input_array, double *result_array,
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vexp_sse(const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -420,19 +431,23 @@ void vml_vexp(const double *input_array, double *result_array,
         {
             vexp_sse_3(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vexp *****************/
-    static inline void vexp_scalar(const double *input_array, double *result_array,
+    static inline int vexp_scalar(const double *input_array, double *result_array,
                                    unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_1_ops(OP1, OP2, 0, NAME_SCALAR_EXP);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

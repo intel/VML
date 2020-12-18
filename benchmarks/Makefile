@@ -4,17 +4,33 @@ include Makefile.tc.list
 #################### Configuration area #####################
 #------------ Compiling options --------------#
 VML_INCLUDE_DIR := ../
-CFLAGS       := -m64 -O2 -fPIC -Wall -march=skylake-avx512 -ffast-math -ftree-loop-vectorize
+CFLAGS       := -m64 -O2 -fPIC -Wall -march=skylake-avx512 -ffast-math -ftree-loop-vectorize -fstack-protector-strong -fPIE -fPIC -D_FORTIFY_SOURCE=2 -Werror=format-security
 CXXFLAGS     := -m64 -O2 -fPIC -std=c++11 -Wall
 CPPFLAGS     := -m64 -O2 -fPIC -Wall -I$(VML_INCLUDE_DIR)
-LDFLAGS      := -lm
+LDFLAGS      := -z noexecstack -z relro -z now -pie -lm
 #---------------------------------------------#
 #############################################################
 
 ##################### DON'T TOUCH area ######################
 
 #-------------- Main entries -----------------#
-all : cppbin cbin refbench
+cbin = $(addsuffix .bin, $(C_TEST_CASES))
+cppbin = $(addsuffix .bin, $(CPP_TEST_CASES))
+refbench = $(addsuffix .bin, $(REF_TEST_CASES))
+
+$(cbin):
+	$(CC) $(CPPFLAGS) -ffast-math -ftree-loop-vectorize $(shell echo $@|awk -F '.' '{ print $$1 }').c -o $@ $(LDFLAGS)
+
+$(cppbin):
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(shell echo $@|awk -F '.' '{ print $$1 }').cpp -o $@ $(LDFLAGS)
+
+$(refbench):
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(shell echo $@|awk -F '.' '{ print $$1 }').c -o $(shell echo $@|awk -F '.' '{ print $$1 }')_vec.bin $(LDFLAGS)
+	$(CC) $(CPPFLAGS) $(shell echo $@|awk -F '.' '{ print $$1 }').c -o $@ -lm
+
+.DEFAULT_GOAL := all
+
+all : $(cbin) $(cppbin) $(refbench)
 	mkdir -p bin
 	$(foreach cpp_test_case, $(CPP_TEST_CASES), \
 		mv $(cpp_test_case).bin bin; \
@@ -25,22 +41,6 @@ all : cppbin cbin refbench
 	$(foreach refc_test_case, $(REF_TEST_CASES), \
 		mv $(refc_test_case).bin bin; \
 		mv $(refc_test_case)_vec.bin bin; \
-	)
-
-cppbin :
-	$(foreach cpp_test_case, $(CPP_TEST_CASES), \
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(cpp_test_case).cpp -o $(cpp_test_case).bin $(LDFLAGS); \
-	)
-	
-cbin :
-	$(foreach c_test_case, $(C_TEST_CASES), \
-		$(CC) $(CPPFLAGS) -ffast-math -ftree-loop-vectorize $(c_test_case).c -o $(c_test_case).bin $(LDFLAGS); \
-	)
-
-refbench :
-	$(foreach refc_test_case, $(REF_TEST_CASES), \
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case)_vec.bin $(LDFLAGS); \
-		$(CC) $(CPPFLAGS) $(refc_test_case).c -o $(refc_test_case).bin -lm; \
 	)
 
 runtest :
@@ -56,6 +56,5 @@ runtest :
 clean :
 	-rm -rf ./bin
 
-.PHONY: all clean runtest cppbin cbin
 #---------------------------------------------#
 #############################################################

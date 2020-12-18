@@ -33,6 +33,7 @@ typedef unsigned long long MASK_TYPE;
 #else
 typedef unsigned int MASK_TYPE;
 #endif
+#define MAX_DIM 2147483647
 
 /* generate a random floating point number from min to max */
 FLOAT rand_in_range(FLOAT min, FLOAT max)
@@ -91,135 +92,148 @@ int main(int argc, char *argv[])
 {
   int dim = atoi(argv[1]);
   int check_flag = 1;
-  FLOAT special_values[SPEC_SIZE] = SPECIAL_VALUES;
-#ifdef POW
-  FLOAT special_values1[SPEC_SIZE] = SPECIAL_VALUEST;
-#endif
-  unsigned int array_size = dim + SPEC_SIZE + 10;
-  unsigned int real_array_size = round_up(array_size, dim);
-  FLOAT input_array[array_size];
-#ifdef POW
-  FLOAT input_array1[array_size];
-#endif
-
-  FLOAT result_array_scalar[array_size];
-  FLOAT result_array_vector[array_size];
-#ifdef SINCOS
-  FLOAT result_array_scalar1[array_size];
-  FLOAT result_array_vector1[array_size];
-#endif
-  while (real_array_size > array_size)
-    real_array_size -= dim;
-
-  for (unsigned int i = 0; i < array_size; i++)
+  int ret_value = -1;
+  if(dim >= 1 && dim <= MAX_DIM)
   {
-    if (i < SPEC_SIZE)
+    FLOAT special_values[SPEC_SIZE] = SPECIAL_VALUES;
+  #ifdef POW
+    FLOAT special_values1[SPEC_SIZE] = SPECIAL_VALUEST;
+  #endif
+    unsigned int array_size = dim + SPEC_SIZE + 10;
+    unsigned int real_array_size = round_up(array_size, dim);
+    FLOAT input_array[array_size];
+  #ifdef POW
+    FLOAT input_array1[array_size];
+  #endif
+
+    FLOAT result_array_scalar[array_size];
+    FLOAT result_array_vector[array_size];
+  #ifdef SINCOS
+    FLOAT result_array_scalar1[array_size];
+    FLOAT result_array_vector1[array_size];
+  #endif
+    while (real_array_size > array_size)
+      real_array_size -= dim;
+
+    for (unsigned int i = 0; i < array_size; i++)
     {
-      input_array[i] = special_values[i];
-#ifdef POW
-      input_array1[i] = special_values1[i];
-#endif
+      if (i < SPEC_SIZE)
+      {
+        input_array[i] = special_values[i];
+  #ifdef POW
+        input_array1[i] = special_values1[i];
+  #endif
+      }
+      else if (i >= SPEC_SIZE && i < SPEC_SIZE + 10)
+      {
+        input_array[i] = RANGE1;
+  #ifdef POW
+        input_array1[i] = RANGE1;
+  #endif
+      }
+      else
+      {
+        input_array[i] = RANGE2;
+  #ifdef POW
+        input_array1[i] = RANGE2;
+  #endif
+      }
+      result_array_scalar[i] = 0.0;
+      result_array_vector[i] = 0.0;
+  #ifdef SINCOS
+      result_array_scalar1[i] = 0.0;
+      result_array_vector1[i] = 0.0;
+  #endif
     }
-    else if (i >= SPEC_SIZE && i < SPEC_SIZE + 10)
+
+    for (unsigned int i = 0; i < real_array_size / dim; i++)
+  #ifdef POW
+  #if defined(TEST_SCALAR_ARRAY)
+      ret_value = fp_vector(input_array[i], input_array1 + i * dim, result_array_vector + i * dim, dim);
+  #elif defined(TEST_ARRAY_SCALAR)
+      ret_value = fp_vector(input_array + i * dim, input_array1[i], result_array_vector + i * dim, dim);
+  #else
+      ret_value = fp_vector(input_array + i * dim, input_array1 + i * dim, result_array_vector + i * dim, dim);
+  #endif
+  #endif
+  #ifdef SINCOS
+    ret_value = fp_vector(input_array + i * dim, result_array_vector + i * dim, result_array_vector1 + i * dim, dim);
+  #endif
+  #if !defined(POW) && !defined(SINCOS)
+    ret_value = fp_vector(input_array + i * dim, result_array_vector + i * dim, dim);
+  #endif
+    if(ret_value != 0)
     {
-      input_array[i] = RANGE1;
-#ifdef POW
-      input_array1[i] = RANGE1;
-#endif
+      printf("Failed to call the vector function\n");
+      exit(-1);
+    }
+
+    for (unsigned int i = 0; i < real_array_size; i++)
+    {
+  #ifdef POW
+  #if defined(TEST_SCALAR_ARRAY)
+      result_array_scalar[i] = fp_scalar(input_array[i/dim], input_array1[i]);
+  #elif defined(TEST_ARRAY_SCALAR)
+      result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i/dim]);
+  #else 
+      result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i]);
+  #endif
+  #endif
+  #ifdef SINCOS
+      fp_scalar(input_array[i], &result_array_scalar[i], &result_array_scalar1[i]);
+  #endif
+  #if !defined(POW) && !defined(SINCOS)
+      result_array_scalar[i] = fp_scalar(input_array[i]);
+  #endif
+    }
+
+    for (unsigned int i = 0; i < real_array_size; i++)
+    {
+      // FLOAT diff = fabs(result_array_scalar[i] - result_array_vector[i]);
+      // if (diff > ERROR_THRESHOLD) {
+  #ifdef SINCOS
+      if (!almostEquals(&result_array_scalar[i], &result_array_vector[i]) || !almostEquals(&result_array_scalar1[i], &result_array_vector1[i]))
+  #else
+      if (!almostEquals(&result_array_scalar[i], &result_array_vector[i]))
+  #endif
+      {
+        printf("array size=%d real_array_size=%d\n", array_size, real_array_size);
+        printf("[Miss Match]: Scalar[%d] - %32.24lf\n", i, result_array_scalar[i]);
+        printf("              Vector[%d] - %32.24lf\n", i, result_array_vector[i]);
+  #ifdef SINCOS
+        printf("[Miss Match]: Scalar1[%d] - %32.24lf\n", i, result_array_scalar1[i]);
+        printf("              Vector1[%d] - %32.24lf\n", i, result_array_vector1[i]);
+  #endif
+  #ifdef POW
+        printf("              Input [%d]:  %32.24lf, Input value1 [%d]:  %32.24lf\n", i, input_array[i], i, input_array1[i]);
+  #else
+        printf("              Input [%d]:  %32.24lf\n", i, input_array[i]);
+  #endif
+        // printf("              diff   - %32.24lf\n", diff);
+        check_flag = 0;
+      }
+    }
+
+    if (check_flag)
+    {
+      printf("[Test Result]: PASS\n");
     }
     else
     {
-      input_array[i] = RANGE2;
-#ifdef POW
-      input_array1[i] = RANGE2;
-#endif
+      printf("[Test Result]: FAIL\n");
     }
-    result_array_scalar[i] = 0.0;
-    result_array_vector[i] = 0.0;
-#ifdef SINCOS
-    result_array_scalar1[i] = 0.0;
-    result_array_vector1[i] = 0.0;
-#endif
-  }
-
-  for (unsigned int i = 0; i < real_array_size / dim; i++)
-#ifdef POW
-#if defined(TEST_SCALAR_ARRAY)
-    fp_vector(input_array[i], input_array1 + i * dim, result_array_vector + i * dim, dim);
-#elif defined(TEST_ARRAY_SCALAR)
-    fp_vector(input_array + i * dim, input_array1[i], result_array_vector + i * dim, dim);
-#else
-    fp_vector(input_array + i * dim, input_array1 + i * dim, result_array_vector + i * dim, dim);
-#endif
-#endif
-#ifdef SINCOS
-  fp_vector(input_array + i * dim, result_array_vector + i * dim, result_array_vector1 + i * dim, dim);
-#endif
-#if !defined(POW) && !defined(SINCOS)
-  fp_vector(input_array + i * dim, result_array_vector + i * dim, dim);
-#endif
-
-  for (unsigned int i = 0; i < real_array_size; i++)
+  #if 0
+    FLOAT a1 = 1.0000000000000000009;
+    FLOAT a2 = 1.0000000000000000008;
+    FLOAT b1 = 0.00000002;
+    FLOAT b2 = 0.00000001;
+    printf("======1 %d\n", almostEquals(&a1, &a2));
+    printf("======2 %d\n", almostEquals(&b1, &b2));
+  #endif
+    return 0;
+  }else
   {
-#ifdef POW
-#if defined(TEST_SCALAR_ARRAY)
-    result_array_scalar[i] = fp_scalar(input_array[i/dim], input_array1[i]);
-#elif defined(TEST_ARRAY_SCALAR)
-    result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i/dim]);
-#else 
-    result_array_scalar[i] = fp_scalar(input_array[i], input_array1[i]);
-#endif
-#endif
-#ifdef SINCOS
-    fp_scalar(input_array[i], &result_array_scalar[i], &result_array_scalar1[i]);
-#endif
-#if !defined(POW) && !defined(SINCOS)
-    result_array_scalar[i] = fp_scalar(input_array[i]);
-#endif
+    printf("Error input for dim, which should be in the range [1, 2147483647]\n");
+    return -1;
   }
-
-  for (unsigned int i = 0; i < real_array_size; i++)
-  {
-    // FLOAT diff = fabs(result_array_scalar[i] - result_array_vector[i]);
-    // if (diff > ERROR_THRESHOLD) {
-#ifdef SINCOS
-    if (!almostEquals(&result_array_scalar[i], &result_array_vector[i]) || !almostEquals(&result_array_scalar1[i], &result_array_vector1[i]))
-#else
-    if (!almostEquals(&result_array_scalar[i], &result_array_vector[i]))
-#endif
-    {
-      printf("array size=%d real_array_size=%d\n", array_size, real_array_size);
-      printf("[Miss Match]: Scalar[%d] - %32.24lf\n", i, result_array_scalar[i]);
-      printf("              Vector[%d] - %32.24lf\n", i, result_array_vector[i]);
-#ifdef SINCOS
-      printf("[Miss Match]: Scalar1[%d] - %32.24lf\n", i, result_array_scalar1[i]);
-      printf("              Vector1[%d] - %32.24lf\n", i, result_array_vector1[i]);
-#endif
-#ifdef POW
-      printf("              Input [%d]:  %32.24lf, Input value1 [%d]:  %32.24lf\n", i, input_array[i], i, input_array1[i]);
-#else
-      printf("              Input [%d]:  %32.24lf\n", i, input_array[i]);
-#endif
-      // printf("              diff   - %32.24lf\n", diff);
-      check_flag = 0;
-    }
-  }
-
-  if (check_flag)
-  {
-    printf("[Test Result]: PASS\n");
-  }
-  else
-  {
-    printf("[Test Result]: FAIL\n");
-  }
-#if 0
-  FLOAT a1 = 1.0000000000000000009;
-  FLOAT a2 = 1.0000000000000000008;
-  FLOAT b1 = 0.00000002;
-  FLOAT b2 = 0.00000001;
-  printf("======1 %d\n", almostEquals(&a1, &a2));
-  printf("======2 %d\n", almostEquals(&b1, &b2));
-#endif
-  return 0;
 }

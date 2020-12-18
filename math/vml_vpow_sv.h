@@ -37,22 +37,22 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vpow_sv_func_t)(const double, const double *, double *, unsigned int);
-    static inline void vpow_sv_avx512(const double input_value, const double *input_array,
+    typedef int (*vml_vpow_sv_func_t)(const double, const double *, double *, unsigned int);
+    static inline int vpow_sv_avx512(const double input_value, const double *input_array,
                                    double *result_array, unsigned int size);
-    static inline void vpow_sv_avx2(const double input_value, const double *input_array,
+    static inline int vpow_sv_avx2(const double input_value, const double *input_array,
                                  double *result_array, unsigned int size);
-    static inline void vpow_sv_avx(const double input_value, const double *input_array,
+    static inline int vpow_sv_avx(const double input_value, const double *input_array,
                                 double *result_array, unsigned int size);
-    static inline void vpow_sv_sse(const double input_value, const double *input_array,
+    static inline int vpow_sv_sse(const double input_value, const double *input_array,
                                 double *result_array, unsigned int size);
-    static inline void vpow_sv_scalar(const double input_value, const double *input_array,
+    static inline int vpow_sv_scalar(const double input_value, const double *input_array,
                                    double *result_array, unsigned int size);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vpow_sv(const double input_value, const double *input_array, double *result_array,
+    int vml_vpow_sv(const double input_value, const double *input_array, double *result_array,
                   unsigned int size) __attribute__((ifunc("vpow_sv_ifunc")));
 #else
-void vml_vpow_sv(const double input_value, const double *input_array, double *result_array,
+    int vml_vpow_sv(const double input_value, const double *input_array, double *result_array,
               unsigned int size);
 #endif
 
@@ -253,13 +253,15 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512 vpow_sv_avx512(const double input_value,
+    static inline int __VML_FN_ATTR_AVX512 vpow_sv_avx512(const double input_value,
                                                         const double *input_array,
                                                         double *result_array,
                                                         unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vpow_sv_avx512_16_group(input_value, input_array, result_array, size);
@@ -272,6 +274,7 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
         {
             vpow_sv_avx512_7(input_value, input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -771,12 +774,14 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vpow_sv_avx2(const double input_value, const double *input_array, double *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vpow_sv_avx2_sub16(input_value, input_array, result_array, size);
@@ -789,6 +794,7 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
         {
             vpow_sv_avx2_7(input_value, input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -816,12 +822,14 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vpow_sv_avx(const double input_value, const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -842,6 +850,7 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
         {
             vpow_sv_avx_3(input_value, input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -869,12 +878,14 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vpow_sv_sse(const double input_value, const double *input_array, double *result_array,
              unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -895,19 +906,23 @@ void vml_vpow_sv(const double input_value, const double *input_array, double *re
         {
             vpow_sv_sse_3(input_value, input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
-    static inline void vpow_sv_scalar(const double input_value, const double *input_array, double *result_array,
+    static inline int vpow_sv_scalar(const double input_value, const double *input_array, double *result_array,
                                    unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_1_ops(OP1, OP2, 0, NAME_SCALAR_POW);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

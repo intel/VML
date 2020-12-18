@@ -37,29 +37,29 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vpow_sv_hook_func_t)(const double, const double *, double *, unsigned int, 
+    typedef int (*vml_vpow_sv_hook_func_t)(const double, const double *, double *, unsigned int, 
     vml_hook_func_t, void *, vml_hook_func_t, void *);
-    static inline void vpow_sv_hook_avx512(const double input_value, const double *input_array,
+    static inline int vpow_sv_hook_avx512(const double input_value, const double *input_array,
                                    double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpow_sv_hook_avx2(const double input_value, const double *input_array,
+    static inline int vpow_sv_hook_avx2(const double input_value, const double *input_array,
                                  double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                                  void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpow_sv_hook_avx(const double input_value, const double *input_array,
+    static inline int vpow_sv_hook_avx(const double input_value, const double *input_array,
                                 double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                                 void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpow_sv_hook_sse(const double input_value, const double *input_array,
+    static inline int vpow_sv_hook_sse(const double input_value, const double *input_array,
                                 double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                                 void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpow_sv_hook_scalar(const double input_value, const double *input_array,
+    static inline int vpow_sv_hook_scalar(const double input_value, const double *input_array,
                                    double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vpow_sv_hook(const double input_value, const double *input_array, double *result_array,
+    int vml_vpow_sv_hook(const double input_value, const double *input_array, double *result_array,
                   unsigned int size, vml_hook_func_t pre_hook, void * pre_args, 
                   vml_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vpow_sv_hook_ifunc")));
 #else
-void vml_vpow_sv_hook(const double input_value, const double *input_array, double *result_array,
+    int vml_vpow_sv_hook(const double input_value, const double *input_array, double *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, 
               vml_hook_func_t post_hook, void * post_args);
 #endif
@@ -271,7 +271,7 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512 vpow_sv_hook_avx512(const double input_value,
+    static inline int __VML_FN_ATTR_AVX512 vpow_sv_hook_avx512(const double input_value,
                                                         const double *input_array,
                                                         double *result_array,
                                                         unsigned int size, 
@@ -281,6 +281,8 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vpow_sv_hook_avx512_16_group(input_value, input_array, result_array, size, 
@@ -295,6 +297,7 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
             vpow_sv_hook_avx512_7(input_value, input_array, result_array, size, 
             array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -805,13 +808,15 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vpow_sv_hook_avx2(const double input_value, const double *input_array, double *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, 
               void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vpow_sv_hook_avx2_sub16(input_value, input_array, result_array, size, 
@@ -825,6 +830,7 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
         {
             vpow_sv_hook_avx2_7(input_value, input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -856,13 +862,15 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vpow_sv_hook_avx(const double input_value, const double *input_array, double *result_array,
              unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, 
              void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -883,6 +891,7 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
         {
             vpow_sv_hook_avx_3(input_value, input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
@@ -913,13 +922,15 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vpow_sv_hook_sse(const double input_value, const double *input_array, double *result_array,
              unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, 
              void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -940,20 +951,24 @@ void vml_vpow_sv_hook(const double input_value, const double *input_array, doubl
         {
             vpow_sv_hook_sse_3(input_value, input_array, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpow *****************/
-    static inline void vpow_sv_hook_scalar(const double input_value, const double *input_array, double *result_array,
+    static inline int vpow_sv_hook_scalar(const double input_value, const double *input_array, double *result_array,
                                    unsigned int size, vml_hook_func_t pre_hook, void * pre_args, 
                                    vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_1_ops(OP1, OP2, 0, NAME_SCALAR_POW);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

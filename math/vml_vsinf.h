@@ -37,22 +37,22 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vsinf_func_t)(const float *, float *, unsigned int);
-    static inline void vsinf_avx512(const float *input_array, float *result_array,
+    typedef int (*vml_vsinf_func_t)(const float *, float *, unsigned int);
+    static inline int vsinf_avx512(const float *input_array, float *result_array,
                                     unsigned int size);
-    static inline void vsinf_avx2(const float *input_array, float *result_array,
+    static inline int vsinf_avx2(const float *input_array, float *result_array,
                                   unsigned int size);
-    static inline void vsinf_avx(const float *input_array, float *result_array,
+    static inline int vsinf_avx(const float *input_array, float *result_array,
                                  unsigned int size);
-    static inline void vsinf_sse(const float *input_array, float *result_array,
+    static inline int vsinf_sse(const float *input_array, float *result_array,
                                  unsigned int size);
-    static inline void vsinf_scalar(const float *input_array, float *result_array,
+    static inline int vsinf_scalar(const float *input_array, float *result_array,
                                     unsigned int size);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vsinf(const float *input_array, float *result_array,
+    int vml_vsinf(const float *input_array, float *result_array,
                    unsigned int size) __attribute__((ifunc("vsinf_ifunc")));
 #else
-void vml_vsinf(const float *input_array, float *result_array,
+    int vml_vsinf(const float *input_array, float *result_array,
                unsigned int size);
 #endif
 
@@ -124,12 +124,14 @@ void vml_vsinf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512
+    static inline int __VML_FN_ATTR_AVX512
     vsinf_avx512(const float *input_array, float *result_array,
                  unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 31)
         {
             unsigned int count = size >> 5;
@@ -146,6 +148,7 @@ void vml_vsinf(const float *input_array, float *result_array,
         {
             vsinf_avx512_31(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsinf *****************/
@@ -177,12 +180,14 @@ void vml_vsinf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vsinf_avx2(const float *input_array, float *result_array,
                unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 16)
         {
             unsigned int count = size >> 4;
@@ -203,6 +208,7 @@ void vml_vsinf(const float *input_array, float *result_array,
         {
             vsinf_avx2_15(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsinf *****************/
@@ -322,12 +328,14 @@ void vml_vsinf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vsinf_avx(const float *input_array, float *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -350,6 +358,7 @@ void vml_vsinf(const float *input_array, float *result_array,
         {
             vsinf_avx_7(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsinf *****************/
@@ -413,12 +422,14 @@ void vml_vsinf(const float *input_array, float *result_array,
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vsinf_sse(const float *input_array, float *result_array,
               unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -441,19 +452,23 @@ void vml_vsinf(const float *input_array, float *result_array,
         {
             vsinf_sse_7(input_array, result_array, size, array_index);
         }
+        return 0;
     }
 
     /************** vml_vsinf *****************/
-    static inline void vsinf_scalar(const float *input_array, float *result_array,
+    static inline int vsinf_scalar(const float *input_array, float *result_array,
                                     unsigned int size)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALARF_1_ops(OP1, OP2, 0, NAME_SCALAR_SINF);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1
