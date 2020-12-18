@@ -37,29 +37,29 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vsincos_hook_func_t)(const double *, double *, double *, unsigned int, vml_hook_func_t pre_hook, 
+    typedef int (*vml_vsincos_hook_func_t)(const double *, double *, double *, unsigned int, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vsincos_hook_avx512(const double *input_array, double *result_array,
+    static inline int vsincos_hook_avx512(const double *input_array, double *result_array,
                                       double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vsincos_hook_avx2(const double *input_array, double *result_array,
+    static inline int vsincos_hook_avx2(const double *input_array, double *result_array,
                                     double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vsincos_hook_avx(const double *input_array, double *result_array,
+    static inline int vsincos_hook_avx(const double *input_array, double *result_array,
                                    double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vsincos_hook_sse(const double *input_array, double *result_array,
+    static inline int vsincos_hook_sse(const double *input_array, double *result_array,
                                    double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vsincos_hook_scalar(const double *input_array, double *result_array,
+    static inline int vsincos_hook_scalar(const double *input_array, double *result_array,
                                       double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vsincos_hook(const double *input_array, double *result_array, double *result_array1,
+    int vml_vsincos_hook(const double *input_array, double *result_array, double *result_array1,
                      unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vsincos_hook_ifunc")));
 #else
-void vml_vsincos_hook(const double *input_array, double *result_array, double *result_array1,
+    int vml_vsincos_hook(const double *input_array, double *result_array, double *result_array1,
                  unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #endif
@@ -190,13 +190,14 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512
+    static inline int __VML_FN_ATTR_AVX512
     vsincos_hook_avx512(const double *input_array, double *result_array, double *result_array1,
                    unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
-
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 16)
         {
             vsincos_hook_avx512_sub(input_array, result_array, result_array1, size, pre_hook, pre_args, post_hook, post_args);
@@ -209,6 +210,7 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
         {
             vsincos_hook_avx512_15(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vsincos_hook *****************/
@@ -267,12 +269,14 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vsincos_hook_avx2(const double *input_array, double *result_array, double *result_array1,
                  unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             unsigned int count = size >> 3;
@@ -293,6 +297,7 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
         {
             vsincos_hook_AVX_7(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vsincos_hook *****************/
@@ -319,12 +324,14 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vsincos_hook_avx(const double *input_array, double *result_array, double *result_array1,
                 unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -345,6 +352,7 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
         {
             vsincos_hook_avx_3(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vsincos_hook *****************/
@@ -468,12 +476,14 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vsincos_hook_sse(const double *input_array, double *result_array, double *result_array1,
                 unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -494,20 +504,24 @@ void vml_vsincos_hook(const double *input_array, double *result_array, double *r
         {
             vsincos_hook_sse_3(input_array, result_array, result_array1, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vsincos_hook *****************/
-    static inline void vsincos_hook_scalar(const double *input_array, double *result_array,
+    static inline int vsincos_hook_scalar(const double *input_array, double *result_array,
                                       double *result_array1, unsigned int size, vml_hook_func_t pre_hook, 
 				   void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_1_ops(OP1, OP2, 0,);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef OP1

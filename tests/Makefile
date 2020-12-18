@@ -4,33 +4,34 @@ include Makefile.tc.list
 #################### Configuration area #####################
 #------------ Compiling options --------------#
 VML_INCLUDE_DIR := ../
-CFLAGS       := -m64 -O2 -fPIC -Wall -ffast-math -ftree-loop-vectorize
+CFLAGS       := -m64 -O2 -fPIC -Wall -ffast-math -ftree-loop-vectorize -fstack-protector-strong -fPIE -fPIC -D_FORTIFY_SOURCE=2 -Werror=format-security
 CXXFLAGS     := -m64 -O2 -fPIC -std=c++11 -Wall
 CPPFLAGS     := -I$(VML_INCLUDE_DIR)
-LDFLAGS      := -lm
+LDFLAGS      := -z noexecstack -z relro -z now -pie -lm
 #---------------------------------------------#
 #############################################################
 
 ##################### DON'T TOUCH area ######################
 
 #-------------- Main entries -----------------#
-all : cppbin cbin
+cbin = $(addsuffix .bin, $(C_TEST_CASES))
+cppbin = $(addsuffix .bin, $(CPP_TEST_CASES))
+
+$(cbin): 
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(shell echo $@|awk -F '.' '{ print $$1 }').c -o $@ $(LDFLAGS)
+
+$(cppbin):
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(shell echo $@|awk -F '.' '{ print $$1 }').cpp -o $@ $(LDFLAGS)
+
+.DEFAULT_GOAL := all
+
+all : $(cppbin) $(cbin)
 	mkdir -p bin
 	$(foreach cpp_test_case, $(CPP_TEST_CASES), \
 		mv $(cpp_test_case).bin bin; \
 	)
 	$(foreach c_test_case, $(C_TEST_CASES), \
 		mv $(c_test_case).bin bin; \
-	)
-
-cppbin :
-	$(foreach cpp_test_case, $(CPP_TEST_CASES), \
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(cpp_test_case).cpp -o $(cpp_test_case).bin $(LDFLAGS); \
-	)
-	
-cbin :
-	$(foreach c_test_case, $(C_TEST_CASES), \
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(c_test_case).c -o $(c_test_case).bin $(LDFLAGS); \
 	)
 
 runtest :
@@ -46,6 +47,5 @@ runtest :
 clean :
 	-rm -rf ./bin
 
-.PHONY: all clean runtest cppbin cbin
 #---------------------------------------------#
 #############################################################

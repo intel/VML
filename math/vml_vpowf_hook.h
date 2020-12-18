@@ -37,29 +37,29 @@ extern "C"
 #endif
 
 #include "vml_common.h"
-    typedef void (*vml_vpowf_hook_func_t)(const float *, const float *, float *, unsigned int, vml_hook_func_t pre_hook, 
+    typedef int (*vml_vpowf_hook_func_t)(const float *, const float *, float *, unsigned int, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpowf_hook_avx512(const float *input_array, const float *input_array1, float *result_array,
+    static inline int vpowf_hook_avx512(const float *input_array, const float *input_array1, float *result_array,
                                     unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpowf_hook_avx2(const float *input_array, const float *input_array1, float *result_array,
+    static inline int vpowf_hook_avx2(const float *input_array, const float *input_array1, float *result_array,
                                   unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpowf_hook_avx(const float *input_array, const float *input_array1, float *result_array,
+    static inline int vpowf_hook_avx(const float *input_array, const float *input_array1, float *result_array,
                                  unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpowf_hook_sse(const float *input_array, const float *input_array1, float *result_array,
+    static inline int vpowf_hook_sse(const float *input_array, const float *input_array1, float *result_array,
                                  unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    static inline void vpowf_hook_scalar(const float *input_array, const float *input_array1, float *result_array,
+    static inline int vpowf_hook_scalar(const float *input_array, const float *input_array1, float *result_array,
                                     unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #if GCC_IFUN_UNAVAILABLE == 0
-    void vml_vpowf_hook(const float *input_array, const float *input_array1, float *result_array,
+    int vml_vpowf_hook(const float *input_array, const float *input_array1, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args) __attribute__((ifunc("vpowf_hook_ifunc")));
 #else
-void vml_vpowf_hook(const float *input_array, const float *input_array1, float *result_array,
+    int vml_vpowf_hook(const float *input_array, const float *input_array1, float *result_array,
                unsigned int size, vml_hook_func_t pre_hook, 
                                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
 #endif
@@ -254,7 +254,7 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
     }
 
     /* kernel with vectorization up to AVX512 */
-    static inline void __VML_FN_ATTR_AVX512 vpowf_hook_avx512(const float *input_array,
+    static inline int __VML_FN_ATTR_AVX512 vpowf_hook_avx512(const float *input_array,
                                                          const float *input_array1,
                                                          float *result_array,
                                                          unsigned int size, vml_hook_func_t pre_hook, 
@@ -262,6 +262,8 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || input_array1 == NULL || result_array == NULL)
+            return -1;
         if (size > 8)
         {
             vpowf_hook_avx512_16_group(input_array, input_array1, result_array, size, pre_hook, pre_args, post_hook, post_args);
@@ -274,6 +276,7 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
         {
             vpowf_hook_avx512_7(input_array, input_array1, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpowf_hook *****************/
@@ -299,12 +302,14 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
     }
 
     /* kernel with vectorization up to AVX2 */
-    static inline void __VML_FN_ATTR_AVX2
+    static inline int __VML_FN_ATTR_AVX2
     vpowf_hook_avx2(const float *input_array, const float *input_array1, float *result_array,
                unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || input_array1 == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -325,6 +330,7 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
         {
             vpowf_hook_avx2_3(input_array, input_array1, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpowf_hook *****************/
@@ -352,12 +358,14 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
     }
 
     /* kernel with vectorization up to AVX */
-    static inline void __VML_FN_ATTR_AVX
+    static inline int __VML_FN_ATTR_AVX
     vpowf_hook_avx(const float *input_array, const float *input_array1, float *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || input_array1 == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -378,6 +386,7 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
         {
             vpowf_hook_avx_3(input_array, input_array1, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpowf_hook *****************/
@@ -405,12 +414,14 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
     }
 
     /* kernel with vectorization up to SSE */
-    static inline void __VML_FN_ATTR_SSE2
+    static inline int __VML_FN_ATTR_SSE2
     vpowf_hook_sse(const float *input_array, const float *input_array1, float *result_array,
               unsigned int size, vml_hook_func_t pre_hook, void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || input_array1 == NULL || result_array == NULL)
+            return -1;
         if (size > 4)
         {
             unsigned int count = size >> 2;
@@ -431,20 +442,24 @@ void vml_vpowf_hook(const float *input_array, const float *input_array1, float *
         {
             vpowf_hook_sse_3(input_array, input_array1, result_array, size, array_index, pre_hook, pre_args, post_hook, post_args);
         }
+        return 0;
     }
 
     /************** vml_vpowf_hook *****************/
-    static inline void vpowf_hook_scalar(const float *input_array, const float *input_array1,
+    static inline int vpowf_hook_scalar(const float *input_array, const float *input_array1,
                                     float *result_array, unsigned int size, vml_hook_func_t pre_hook, 
 				   void * pre_args, vml_hook_func_t post_hook, void * post_args)
     {
         int index = 0;
         int *array_index = &index;
+        if(input_array == NULL || input_array1 == NULL || result_array == NULL)
+            return -1;
         for (unsigned int i = 0; i < size; i++)
         {
             SCALAR_f2d_1_ops(OP1, OP2, 0, NAME_SCALAR_POWF);
             *array_index += 1;
         }
+        return 0;
     }
 
 #undef VV

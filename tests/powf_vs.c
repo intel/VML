@@ -32,7 +32,7 @@
 #define FLOAT float
 #define POW
 #define TEST_ARRAY_SCALAR 1
-typedef void (*test_func_vector)(const FLOAT *, const FLOAT, FLOAT *, unsigned int);
+typedef int (*test_func_vector)(const FLOAT *, const FLOAT, FLOAT *, unsigned int);
 typedef FLOAT (*test_func_scalar)(FLOAT, FLOAT);
 test_func_vector fp_vector = vml_vpowf_vs;
 test_func_scalar fp_scalar = powf;

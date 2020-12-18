@@ -30,7 +30,7 @@
 /*************************************************************************************/
 #include "test_common.h"
 #define FLOAT float
-typedef void (*test_func_vector)(const FLOAT *, FLOAT *, unsigned int);
+typedef int (*test_func_vector)(const FLOAT *, FLOAT *, unsigned int);
 typedef FLOAT (*test_func_scalar)(FLOAT);
 test_func_vector fp_vector = vml_vlogf;
 test_func_scalar fp_scalar = logf;

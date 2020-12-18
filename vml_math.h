@@ -37,84 +37,84 @@ extern "C"
 #endif
     #include "math/vml_common.h"
 
-    void vml_vsin(const double *input_array, double *result_array,
+    int vml_vsin(const double *input_array, double *result_array,
                   unsigned int size);
-    void vml_vsinf(const float *input_array, float *result_array,
+    int vml_vsinf(const float *input_array, float *result_array,
                    unsigned int size);
-    void vml_vcos(const double *input_array, double *result_array,
+    int vml_vcos(const double *input_array, double *result_array,
                   unsigned int size);
-    void vml_vcosf(const float *input_array, float *result_array,
+    int vml_vcosf(const float *input_array, float *result_array,
                    unsigned int size);
-    void vml_vlog(const double *input_array, double *result_array,
+    int vml_vlog(const double *input_array, double *result_array,
                   unsigned int size);
-    void vml_vlogf(const float *input_array, float *result_array,
+    int vml_vlogf(const float *input_array, float *result_array,
                    unsigned int size);
-    void vml_vexp(const double *input_array, double *result_array,
+    int vml_vexp(const double *input_array, double *result_array,
                   unsigned int size);
-    void vml_vexpf(const float *input_array, float *result_array,
+    int vml_vexpf(const float *input_array, float *result_array,
                    unsigned int size);
-    void vml_vsincos(const double *input_array, double *sin_result_array,
+    int vml_vsincos(const double *input_array, double *sin_result_array,
                      double *cos_result_array, unsigned int size);
-    void vml_vsincosf(const float *input_array, float *sin_result_array,
+    int vml_vsincosf(const float *input_array, float *sin_result_array,
                       float *cos_result_array, unsigned int size);
-    void vml_vpow(const double *input_array_x, const double *input_array_y,
+    int vml_vpow(const double *input_array_x, const double *input_array_y,
                   double *result_array, unsigned int size);
-    void vml_vpowf(const float *input_array_x, const float *input_array_y,
+    int vml_vpowf(const float *input_array_x, const float *input_array_y,
                    float *result_array, unsigned int size);
-    void vml_vpow_vs(const double *input_array_x, const double input_y,
+    int vml_vpow_vs(const double *input_array_x, const double input_y,
                   double *result_array, unsigned int size);
-    void vml_vpow_sv(const double input_x, const double *input_array_y,
+    int vml_vpow_sv(const double input_x, const double *input_array_y,
                   double *result_array, unsigned int size);
-    void vml_vpowf_vs(const float *input_array_x, const float input_y,
+    int vml_vpowf_vs(const float *input_array_x, const float input_y,
                   float *result_array, unsigned int size);
-    void vml_vpowf_sv(const float input_x, const float *input_array_y,
+    int vml_vpowf_sv(const float input_x, const float *input_array_y,
                   float *result_array, unsigned int size);
-    void vml_vsin_hook(const double *input_array, double *result_array,
+    int vml_vsin_hook(const double *input_array, double *result_array,
                   unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vsinf_hook(const float *input_array, float *result_array,
+    int vml_vsinf_hook(const float *input_array, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vcos_hook(const double *input_array, double *result_array,
+    int vml_vcos_hook(const double *input_array, double *result_array,
                   unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vcosf_hook(const float *input_array, float *result_array,
+    int vml_vcosf_hook(const float *input_array, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vlog_hook(const double *input_array, double *result_array,
+    int vml_vlog_hook(const double *input_array, double *result_array,
                   unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vlogf_hook(const float *input_array, float *result_array,
+    int vml_vlogf_hook(const float *input_array, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vexp_hook(const double *input_array, double *result_array,
+    int vml_vexp_hook(const double *input_array, double *result_array,
                   unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vexpf_hook(const float *input_array, float *result_array,
+    int vml_vexpf_hook(const float *input_array, float *result_array,
                    unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vsincos_hook(const double *input_array, double *sin_result_array,
+    int vml_vsincos_hook(const double *input_array, double *sin_result_array,
                      double *cos_result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vsincosf_hook(const float *input_array, float *sin_result_array,
+    int vml_vsincosf_hook(const float *input_array, float *sin_result_array,
                       float *cos_result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpow_hook(const double *input_array_x, const double *input_array_y,
+    int vml_vpow_hook(const double *input_array_x, const double *input_array_y,
                    double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpow_sv_hook(const double input_x, const double *input_array_y,
+    int vml_vpow_sv_hook(const double input_x, const double *input_array_y,
                    double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpow_vs_hook(const double *input_array_x, const double input_y,
+    int vml_vpow_vs_hook(const double *input_array_x, const double input_y,
                    double *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpowf_hook(const float *input_array_x, const float *input_array_y,
+    int vml_vpowf_hook(const float *input_array_x, const float *input_array_y,
                    float *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpowf_sv_hook(const float input_x, const float *input_array_y,
+    int vml_vpowf_sv_hook(const float input_x, const float *input_array_y,
                    float *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
-    void vml_vpowf_vs_hook(const float *input_array_x, const float input_y,
+    int vml_vpowf_vs_hook(const float *input_array_x, const float input_y,
                    float *result_array, unsigned int size, vml_hook_func_t pre_hook, 
                    void * pre_args, vml_hook_func_t post_hook, void * post_args);
         
