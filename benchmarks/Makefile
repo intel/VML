@@ -4,7 +4,7 @@ include Makefile.tc.list
 #################### Configuration area #####################
 #------------ Compiling options --------------#
 VML_INCLUDE_DIR := ../
-CFLAGS       := -m64 -O2 -fPIC -Wall -march=skylake-avx512 -ffast-math -ftree-loop-vectorize -fstack-protector-strong -fPIE -fPIC -D_FORTIFY_SOURCE=2 -Werror=format-security
+CFLAGS       := -m64 -O2 -fPIC -Wall -march=native -ffast-math -ftree-loop-vectorize -fstack-protector-strong -fPIE -fPIC -D_FORTIFY_SOURCE=2 -Werror=format-security
 CXXFLAGS     := -m64 -O2 -fPIC -std=c++11 -Wall
 CPPFLAGS     := -m64 -O2 -fPIC -Wall -I$(VML_INCLUDE_DIR)
 LDFLAGS      := -z noexecstack -z relro -z now -pie -lm

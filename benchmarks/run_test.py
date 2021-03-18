@@ -3,6 +3,7 @@ import os
 import subprocess
 from decimal import Decimal
 import argparse
+import statistics
 
 def run_cmd(cmd, env=None):
     current_env = os.environ.copy()
@@ -47,9 +48,12 @@ def main():
         parser.print_help()
         exit(1)
     print(test_name)
-    numbers = [1,2,3,4,5,6,7,8,9,10,14,15,16,17,18,30,31,32,33,34,62,63,64,65,66,1024,10000]
-    #numbers = [1024,10000]
+    #numbers = [1,2,3,4,5,6,7,8,9,10,12,14,15,16,17,18,25,30,31,32,33,34,62,63,64,65,66,1024,10000]
+    numbers = [5,6,15,31,1024]
+    #numbers = [5]
     results = []
+    tmp_results = []
+    rsd_results = []
     for num in numbers:
         loop_count = 10000000
         #if test_name == "sin_scalar" and num > 4:
@@ -62,15 +66,24 @@ def main():
             loop_count = 1000000
         cmd = "taskset -c 0 ./bin/{} {} {}".format(test_name, num, loop_count)
         max=0.0
+        min=100000000.0
         for i in range(args.loop):
             val = run_cmd(cmd)
             if val > max:
                 max = val
+            if val < min:
+                min = val
+            tmp_results.append(val)
         print(num, max)
-        results.append(str(max))
+        print(num, min)
+        #results.append(str(max))
+        tmp_results.remove(max)
+        tmp_results.remove(min)
+        rsd_results.append(str(statistics.stdev(tmp_results)/statistics.mean(tmp_results)*100)+"%")
+        results.append(str(statistics.mean(tmp_results)))
     s=""
-    for rst in results:
-        s+=rst+" "
+    for i in range(len(results)):
+        s+=results[i]+" "+rsd_results[i]+" "
     print(s)
 
 if __name__ == '__main__':

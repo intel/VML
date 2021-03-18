@@ -43,8 +43,6 @@ extern "C"
         __builtin_cpu_init();                    \
         if (cpu_supports_avx512())               \
             return name##_avx512;                \
-        else if (cpu_supports_avx2())            \
-            return name##_avx2;                  \
         else if (cpu_supports_avx())             \
             return name##_avx;                   \
         else if (cpu_supports_sse2())            \
@@ -60,8 +58,6 @@ extern "C"
         __builtin_cpu_init();                         \
         if (cpu_supports_avx512())                    \
             return name##_avx512;                     \
-        else if (cpu_supports_avx2())                 \
-            return name##_avx2;                       \
         else if (cpu_supports_avx())                  \
             return name##_avx;                        \
         else if (cpu_supports_sse2())                 \
