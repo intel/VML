@@ -50,7 +50,7 @@ def main():
     print(test_name)
     #numbers = [1,2,3,4,5,6,7,8,9,10,12,14,15,16,17,18,25,30,31,32,33,34,62,63,64,65,66,1024,10000]
     numbers = [5,6,15,31,1024]
-    #numbers = [5]
+    #numbers = [31]
     results = []
     tmp_results = []
     rsd_results = []
@@ -79,9 +79,12 @@ def main():
         #results.append(str(max))
         tmp_results.remove(max)
         tmp_results.remove(min)
-        rsd_results.append(str(statistics.stdev(tmp_results)/statistics.mean(tmp_results)*100)+"%")
-        results.append(str(statistics.mean(tmp_results)))
+        rsd_results.append(str(round(statistics.stdev(tmp_results)/statistics.mean(tmp_results)*100, 2))+"%")
+        results.append(str(round(statistics.mean(tmp_results), 4)))
     s=""
+    print(results)
+    print(rsd_results)
+    print(tmp_results)
     for i in range(len(results)):
         s+=results[i]+" "+rsd_results[i]+" "
     print(s)
