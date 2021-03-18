@@ -81,10 +81,11 @@ def main():
         tmp_results.remove(min)
         rsd_results.append(str(round(statistics.stdev(tmp_results)/statistics.mean(tmp_results)*100, 2))+"%")
         results.append(str(round(statistics.mean(tmp_results), 4)))
+        tmp_results = []
     s=""
-    print(results)
-    print(rsd_results)
-    print(tmp_results)
+    #print(results)
+    #print(rsd_results)
+    #print(tmp_results)
     for i in range(len(results)):
         s+=results[i]+" "+rsd_results[i]+" "
     print(s)
