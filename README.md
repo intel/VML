@@ -1,5 +1,5 @@
 # Vectorized Math Library (VML)
-It is a performance-driven header only library providing a set of functions doing basic math operations like sin/cos/exp/etc..It leverages vectorization instructions (SSE/AVX/AVX2/AVX512) on IA platforms to achieve best performance on Intel hardware. It provides pure C APIs which can support both C and C++.
+It is a performance-driven header only library providing a set of functions doing basic math operations like sin/cos/exp/etc..It leverages vectorization instructions (SSE/AVX/AVX512) on IA platforms to achieve best performance on Intel hardware. It provides pure C APIs which can support both C and C++.
 
 ## How to use it
 - Download the vml source to anywhere you want. Suppose the directory is <vml_root_dir>
@@ -19,3 +19,6 @@ for(int i=0; i<N; i++>)
 }
 ```
 You can also refer to "examples".
+
+## About security
+If you have any problems about security, please contact security@intel.com.
